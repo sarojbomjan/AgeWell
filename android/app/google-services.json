@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1039683795018",
+    "project_id": "eldercare-23292",
+    "storage_bucket": "eldercare-23292.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039683795018:android:3e79489340c6d0b2800eb3",
+        "android_client_info": {
+          "package_name": "com.example.elderly_care"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039683795018-tk9gfpf5rn0ucn506eooojjikh82hcq6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.elderly_care",
+            "certificate_hash": "b6b88ab42e225f201d09d34502809235a346b2e6"
+          }
+        },
+        {
+          "client_id": "1039683795018-u5vh070lrg9abk6s8irse8k94d937cao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ43Y3vm41aJWNyJWB4taV28jf1i3kJtI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039683795018-u5vh070lrg9abk6s8irse8k94d937cao.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1039683795018-vakoncgbm1ncigh772cj4fms3reae2f4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.elderlyCare"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
