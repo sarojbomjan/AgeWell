@@ -4,7 +4,7 @@ import 'package:elderly_care/pages/profile/delete_confimation_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import '../../components/my_textfield.dart';
+import '../login/components/my_textfield.dart';
 import '../../constants/color.dart';
 
 class UpdateProfile extends StatelessWidget {

@@ -1,21 +1,21 @@
 import 'package:elderly_care/authentication/user_authentication.dart';
-import 'package:elderly_care/pages/community/community.dart';
+// import 'package:elderly_care/pages/community/community.dart';
 import 'package:elderly_care/pages/health/health.dart';
 import 'package:elderly_care/pages/googlemap/location_sharing.dart';
 import 'package:elderly_care/pages/profile/profile_page.dart';
-import 'package:elderly_care/pages/settings_page.dart';
+import 'package:elderly_care/pages/settings/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-import '../home_widgets/bottom_navigation_widgets.dart';
-import '../home_widgets/categories_widget.dart';
-import '../home_widgets/featured_services_widget.dart';
-import '../home_widgets/greeting_widget.dart';
-import '../home_widgets/health_overview_widget.dart';
-import '../home_widgets/quick_action_widget.dart';
-import '../home_widgets/search_bar_widget.dart';
-import '../home_widgets/social_enagagement_widget.dart';
+import 'home_widgets/bottom_navigation_widgets.dart';
+import 'home_widgets/categories_widget.dart';
+import 'home_widgets/featured_services_widget.dart';
+import 'home_widgets/greeting_widget.dart';
+import 'home_widgets/health_overview_widget.dart';
+import 'home_widgets/quick_action_widget.dart';
+import 'home_widgets/search_bar_widget.dart';
+import 'home_widgets/social_enagagement_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

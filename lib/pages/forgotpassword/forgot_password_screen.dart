@@ -3,7 +3,7 @@ import "package:elderly_care/pages/forgotpassword/forgot_password_phone.dart";
 import "package:flutter/material.dart";
 import "package:get/get.dart";
 
-import "../login_page.dart";
+import "../login/login_page.dart";
 
 class ForgotPasswordPage {
   static Future<dynamic> ForgotPasswordModalShow(BuildContext context) {

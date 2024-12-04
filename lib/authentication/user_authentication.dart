@@ -1,9 +1,10 @@
 import 'package:elderly_care/authentication/authentication_exception.dart/signup_email_password_failure.dart';
-import 'package:elderly_care/pages/home_page.dart';
+import 'package:elderly_care/pages/home/home_page.dart';
 import 'package:elderly_care/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'authentication_exception.dart/login_fauilure.dart';
 
 class UserAuthentication extends GetxController {
@@ -23,7 +24,6 @@ class UserAuthentication extends GetxController {
     firebaseUser
         .bindStream(_auth.userChanges()); // Stream for user state changes
 
-    // Navigate based on user state
     ever(firebaseUser, _setInitialScreen);
   }
 
@@ -91,6 +91,38 @@ class UserAuthentication extends GetxController {
       throw ex;
     }
   }
+  // Google authentication
+
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        Get.snackbar("Error", "Google Sign-In was cancelled.");
+        return null;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      Get.offAll(() => const HomePage());
+      return userCredential;
+    } catch (e) {
+      Get.snackbar("Error", "Google Sign-In failed. Please try again.");
+      print("Google Sign-In Error: $e");
+      return null;
+    }
+  }
 
   // Login user with email and password
   Future<void> loginUserWithEmailAndPassword(
@@ -115,6 +147,7 @@ class UserAuthentication extends GetxController {
 
   // Log out function
   Future<void> logout() async {
+    await GoogleSignIn().signOut();
     await _auth.signOut();
 
     // Once logged out, navigate to WelcomeScreen

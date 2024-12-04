@@ -1,6 +1,6 @@
 import 'package:elderly_care/constants/color.dart';
-import 'package:elderly_care/pages/login_page.dart';
-import 'package:elderly_care/pages/register_page.dart';
+import 'package:elderly_care/pages/login/login_page.dart';
+import 'package:elderly_care/pages/register/register_page.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {

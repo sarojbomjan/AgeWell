@@ -1,12 +1,12 @@
-import 'package:elderly_care/pages/register_page.dart';
+import 'package:elderly_care/controller/login_controller.dart';
+import 'package:elderly_care/pages/register/register_page.dart';
 import 'package:elderly_care/pages/forgotpassword/forgot_password_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../authentication/authentication_exception.dart/login_fauilure.dart';
-import '../authentication/validaton/validator.dart';
-import '../components/my_button.dart';
-import '../components/my_textfield.dart';
-import '../components/square_tiles.dart';
+import 'package:get/get.dart';
+import '../../authentication/validaton/validator.dart';
+import 'components/my_button.dart';
+import 'components/my_textfield.dart';
+import 'components/square_tiles.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});
@@ -23,40 +23,40 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // sign user method
-  // sign user method
-  void signUserin() async {
-    setState(() {
-      isLoading = true; // Show loading indicator
-    });
+  // // sign user method
+  // void signUserin() async {
+  //   setState(() {
+  //     isLoading = true; // Show loading indicator
+  //   });
 
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-    } on FirebaseAuthException catch (e) {
-      final ex = LoginWithEmailAndPasswordFailure.code(e.code);
+  //   try {
+  //     await FirebaseAuth.instance.signInWithEmailAndPassword(
+  //       email: emailController.text,
+  //       password: passwordController.text,
+  //     );
+  //   } on FirebaseAuthException catch (e) {
+  //     final ex = LoginWithEmailAndPasswordFailure.code(e.code);
 
-      // Show the appropriate error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(ex.message)),
-      );
-    } catch (e) {
-      // If an unknown error occurs
-      const ex = LoginWithEmailAndPasswordFailure();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(ex.message)),
-      );
-    } finally {
-      setState(() {
-        isLoading = false; // Hide loading indicator
-      });
-    }
-  }
+  //     // error message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(ex.message)),
+  //     );
+  //   } catch (e) {
+  //     // If an unknown error occurs
+  //     const ex = LoginWithEmailAndPasswordFailure();
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(ex.message)),
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       isLoading = false; // Hide loading indicator
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    //final controller = Get.put(LoginController());
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -111,7 +111,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                MyButton(text: "Sign In", onTap: signUserin),
+                MyButton(
+                    text: "Sign In",
+                    onTap: () {
+                      LoginController.instance.signUserIn(
+                        emailController.text,
+                        passwordController.text,
+                        context,
+                      );
+                    }),
                 const SizedBox(height: 40),
                 Row(
                   children: [
@@ -134,17 +142,26 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SquareTile(
-                      imagePath: 'lib/images/google.png',
-                      onTap: () async {
-                        // await AuthService().signInWithGoogle();
-                      },
-                    ),
+                    Obx(() => SquareTile(
+                          imagePath: 'lib/images/google.png',
+                          onTap: () {
+                            LoginController.instance.googleSignIn();
+                          },
+                          isLoading:
+                              LoginController.instance.isGoogleLoading.value,
+                        )),
                     const SizedBox(width: 20),
-                    SquareTile(
-                        imagePath: 'lib/images/facebook.jpg', onTap: () {}),
+                    Obx(() => SquareTile(
+                          imagePath: 'lib/images/facebook.jpg',
+                          onTap: () {
+                            // LoginController.instance.facebookSignIn();
+                          },
+                          isLoading:
+                              LoginController.instance.isFacebookLoading.value,
+                        )),
                   ],
                 ),
+
                 const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

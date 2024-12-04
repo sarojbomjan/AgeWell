@@ -1,5 +1,5 @@
 import 'package:elderly_care/authentication/user_authentication.dart';
-import 'package:elderly_care/pages/home_page.dart';
+import 'package:elderly_care/pages/home/home_page.dart';
 import 'package:get/get.dart';
 
 class OTPController extends GetxController {

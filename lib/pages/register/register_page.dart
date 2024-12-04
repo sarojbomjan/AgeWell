@@ -1,12 +1,13 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:elderly_care/authentication/validaton/validator.dart';
 import 'package:elderly_care/controller/sign_up_controller.dart';
-import 'package:elderly_care/pages/login_page.dart';
+import 'package:elderly_care/pages/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../components/my_button.dart';
-import '../components/my_textfield.dart';
-import '../components/square_tiles.dart';
+import '../../controller/login_controller.dart';
+import '../login/components/my_button.dart';
+import '../login/components/my_textfield.dart';
+import '../login/components/square_tiles.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -34,6 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _controller = Get.put(LoginController());
     // Access the theme
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
@@ -246,27 +248,27 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 45),
 
-                // Social login buttons
+                //  Social login buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Google button
-                    SquareTile(
-                      onTap: () async {
-                        // Implement Google login here
-                      },
-                      imagePath: 'lib/images/google.png',
-                    ),
-
+                    Obx(() => SquareTile(
+                          imagePath: 'lib/images/google.png',
+                          onTap: () {
+                            LoginController.instance.googleSignIn();
+                          },
+                          isLoading:
+                              LoginController.instance.isGoogleLoading.value,
+                        )),
                     const SizedBox(width: 20),
-
-                    // Facebook button
-                    SquareTile(
-                      onTap: () {
-                        // Implement Facebook login here
-                      },
-                      imagePath: 'lib/images/facebook.jpg',
-                    ),
+                    Obx(() => SquareTile(
+                          imagePath: 'lib/images/facebook.jpg',
+                          onTap: () {
+                            // LoginController.instance.facebookSignIn();
+                          },
+                          isLoading:
+                              LoginController.instance.isFacebookLoading.value,
+                        )),
                   ],
                 ),
 
