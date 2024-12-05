@@ -1,17 +1,17 @@
-import 'package:elderly_care/constants/color.dart';
-import 'package:elderly_care/controller/profile_controller.dart';
-import 'package:elderly_care/models/user_model.dart';
-import 'package:elderly_care/pages/profile/update_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:elderly_care/controller/profile_controller.dart';
+import 'package:elderly_care/models/user_model.dart';
+import 'package:elderly_care/pages/profile/update_profile.dart';
+import 'package:elderly_care/pages/qrcodes/generate_qr_code.dart';
+import 'package:elderly_care/constants/color.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Fetch user data from Firestore if needed (e.g., full name)
     final profileController = Get.put(ProfileController());
 
     return Scaffold(
@@ -108,21 +108,54 @@ class ProfilePage extends StatelessWidget {
                 height: 10,
               ),
 
-              //menu section
-              ProfileMenuWidget(
-                title: "Settings",
-                icon: LineAwesomeIcons.cog_solid,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "User Management",
-                icon: LineAwesomeIcons.user_check_solid,
-                onPress: () {},
-              ),
-              ProfileMenuWidget(
-                title: "Privacy and Policies",
-                icon: LineAwesomeIcons.info_circle_solid,
-                onPress: () {},
+              // Menu section
+              FutureBuilder<UserModel?>(
+                future: profileController.getUserData(), // Fetch user data
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData) {
+                    UserModel userData = snapshot.data!;
+                    return Column(
+                      children: [
+                        ProfileMenuWidget(
+                          title: "Settings",
+                          icon: LineAwesomeIcons.cog_solid,
+                          onPress: () {},
+                        ),
+                        ProfileMenuWidget(
+                          title: "User Management",
+                          icon: LineAwesomeIcons.user_check_solid,
+                          onPress: () {},
+                        ),
+                        ProfileMenuWidget(
+                          title: "Privacy and Policies",
+                          icon: LineAwesomeIcons.info_circle_solid,
+                          onPress: () {},
+                        ),
+                        ProfileMenuWidget(
+                          title: "Generate QR Code",
+                          icon: LineAwesomeIcons.qrcode_solid,
+                          onPress: () {
+                            // Navigate to the Generate QR Code page, passing the userData
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GenerateQrCode(
+                                  userData: userData,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const Text('User data not found');
+                  }
+                },
               ),
               const Divider(),
               ProfileMenuWidget(
@@ -132,7 +165,6 @@ class ProfilePage extends StatelessWidget {
                 endIcon: false,
                 onPress: () {},
               ),
-              //ProfileMenuWidget(),
             ],
           ),
         ),

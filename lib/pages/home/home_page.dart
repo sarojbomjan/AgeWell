@@ -26,28 +26,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  String currentTime = '';
-  String currentDate = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _updateDateTime();
-  }
-
-  void _updateDateTime() {
-    if (!mounted) return;
-    setState(() {
-      // Format current time and date using DateFormat
-      currentTime =
-          DateFormat('HH:mm').format(DateTime.now()); // 24-hour format
-      currentDate = DateFormat('EEEE, MMMM d')
-          .format(DateTime.now()); // Weekday, Month Day
-    });
-
-    // Update every minute
-    Future.delayed(const Duration(minutes: 1), _updateDateTime);
-  }
 
   // Method to handle navigation tab changes
   void _onNavTap(int index) {

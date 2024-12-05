@@ -20,25 +20,24 @@ class ProfileController extends GetxController {
   final _userAuth = Get.put(UserAuthentication());
   final _storeUser = Get.put(StoreUser());
 
-  // get user email and password to fetch user data
-  // getUserData() async {
-  //   final email = _userAuth.firebaseUser.value?.email;
-  //   if (email != null) {
-  //     try {
-  //       return await _storeUser.getUserDetails(email);
-  //     } catch (e) {
-  //       Get.snackbar("Error", "Failed to fetch user details: $e");
-  //     }
-  //   } else {
-  //     Get.snackbar("Error", "Please log in to continue.");
-  //   }
-  // }
+  var user = Rx<UserModel?>(null);
+  // Reactive variable to hold user details
+  @override
+  void onInit() {
+    super.onInit();
+    getUserData(); // Fetch user data when the controller is initialized
+  }
+
   Future<UserModel?> getUserData() async {
     final email = _userAuth.firebaseUser.value?.email;
     if (email != null) {
       try {
-        // Assuming _storeUser.getUserDetails returns a UserModel
         final userDetails = await _storeUser.getUserDetails(email);
+        if (userDetails != null) {
+          user.value = userDetails; // Update the reactive variable
+        } else {
+          Get.snackbar("Error", "User details not found.");
+        }
         return userDetails; // Returning UserModel
       } catch (e) {
         Get.snackbar("Error", "Failed to fetch user details: $e");

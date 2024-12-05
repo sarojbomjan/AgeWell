@@ -1,9 +1,9 @@
-import 'package:elderly_care/controller/login_controller.dart';
 import 'package:elderly_care/pages/register/register_page.dart';
 import 'package:elderly_care/pages/forgotpassword/forgot_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../authentication/validaton/validator.dart';
+import '../../controller/login_controller.dart';
 import 'components/my_button.dart';
 import 'components/my_textfield.dart';
 import 'components/square_tiles.dart';
@@ -23,40 +23,9 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // // sign user method
-  // void signUserin() async {
-  //   setState(() {
-  //     isLoading = true; // Show loading indicator
-  //   });
-
-  //   try {
-  //     await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //       email: emailController.text,
-  //       password: passwordController.text,
-  //     );
-  //   } on FirebaseAuthException catch (e) {
-  //     final ex = LoginWithEmailAndPasswordFailure.code(e.code);
-
-  //     // error message
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(ex.message)),
-  //     );
-  //   } catch (e) {
-  //     // If an unknown error occurs
-  //     const ex = LoginWithEmailAndPasswordFailure();
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(ex.message)),
-  //     );
-  //   } finally {
-  //     setState(() {
-  //       isLoading = false; // Hide loading indicator
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
-    //final controller = Get.put(LoginController());
+    final controller = Get.put(LoginController());
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -111,15 +80,23 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                MyButton(
-                    text: "Sign In",
-                    onTap: () {
-                      LoginController.instance.signUserIn(
-                        emailController.text,
-                        passwordController.text,
-                        context,
-                      );
-                    }),
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(child: CircularProgressIndicator());
+                  } else {
+                    return MyButton(
+                      text: "Sign In",
+                      onTap: () {
+                        // Calling signIn method from the controller
+                        LoginController.instance.signUserIn(
+                          emailController.text,
+                          passwordController.text,
+                          context,
+                        );
+                      },
+                    );
+                  }
+                }),
                 const SizedBox(height: 40),
                 Row(
                   children: [
@@ -147,8 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                           onTap: () {
                             LoginController.instance.googleSignIn();
                           },
-                          isLoading:
-                              LoginController.instance.isGoogleLoading.value,
+                          isLoading: controller.isGoogleLoading.value,
                         )),
                     const SizedBox(width: 20),
                     Obx(() => SquareTile(
@@ -156,8 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                           onTap: () {
                             // LoginController.instance.facebookSignIn();
                           },
-                          isLoading:
-                              LoginController.instance.isFacebookLoading.value,
+                          isLoading: controller.isFacebookLoading.value,
                         )),
                   ],
                 ),

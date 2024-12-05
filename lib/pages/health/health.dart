@@ -124,19 +124,10 @@ class _Health extends State<Health> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      // appBar: AppBar(
-      //   backgroundColor: const Color(0xFF90EE90),
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back, color: Colors.black),
-      //     onPressed: () => Navigator.pop(context),
-      //   ),
-      //   title: const Text('Heart Rate',
-      //       style: TextStyle(color: Colors.black, fontSize: 20)),
-      //   centerTitle: true,
-      // ),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
@@ -145,7 +136,7 @@ class _Health extends State<Health> {
             Text(
               'Cover both the camera and flash with your finger',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+              style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(height: 40),
             Row(
@@ -155,27 +146,31 @@ class _Health extends State<Health> {
                 const SizedBox(width: 16),
                 Text(
                   bpmValue?.toString() ?? '-',
-                  style: const TextStyle(fontSize: 40, color: Colors.black),
+                  style: theme.textTheme.headlineMedium?.copyWith(fontSize: 30),
                 ),
                 const SizedBox(width: 8),
-                Text('bpm',
-                    style: TextStyle(fontSize: 24, color: Colors.grey[600])),
+                Text(
+                  'bpm',
+                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: 20),
+                ),
               ],
             ),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: toggleMeasurement,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple[100],
-                foregroundColor: Colors.purple,
+                backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                foregroundColor: theme.colorScheme.primary,
                 elevation: 0,
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
               child: Text(
                 isMeasuring ? 'Stop Measurement' : 'Start Measurement',
-                style: TextStyle(fontSize: 16),
+                style: theme.textTheme.bodyLarge?.copyWith(fontSize: 20),
               ),
             ),
             const SizedBox(height: 30),
@@ -187,42 +182,54 @@ class _Health extends State<Health> {
               ),
             const SizedBox(height: 30),
             if (records.isEmpty)
-              const Center(child: Text('No heart rate data available.')),
+              Center(
+                child: Text(
+                  'No heart rate data available.',
+                  style: theme.textTheme.bodyMedium?.copyWith(fontSize: 20),
+                ),
+              ),
             Expanded(
               child: ListView.builder(
                 itemCount: records.length,
                 itemBuilder: (context, index) =>
-                    _buildRecordTile(records[index]),
+                    _buildRecordTile(records[index], theme),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRecordTile(HeartRateRecord record) {
+  Widget _buildRecordTile(HeartRateRecord record, ThemeData theme) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.purple[50],
+        color: theme.colorScheme.secondary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           const Icon(Icons.calendar_today, size: 20, color: Colors.purple),
           const SizedBox(width: 8),
-          // Display date as year-month-day
-          Text('${record.date.year}-${record.date.month}-${record.date.day}',
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(
+            '${record.date.year}-${record.date.month}-${record.date.day}',
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w500),
+          ),
           const Spacer(),
-          const Text('HR', style: TextStyle(color: Colors.grey)),
+          Text(
+            'HR',
+            style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+          ),
           const SizedBox(width: 8),
-          // Display heart rate (bpm)
-          Text('${record.bpm}',
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.purple)),
+          Text(
+            '${record.bpm}',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
