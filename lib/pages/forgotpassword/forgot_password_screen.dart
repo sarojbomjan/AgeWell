@@ -9,7 +9,9 @@ class ForgotPasswordPage {
   static Future<dynamic> ForgotPasswordModalShow(BuildContext context) {
     return showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),)),
         builder: (context) => Container(
               padding: const EdgeInsets.all(30.0),
               child: Column(

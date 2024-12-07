@@ -1,6 +1,7 @@
 import 'package:elderly_care/constants/color.dart';
 import 'package:elderly_care/controller/profile_controller.dart';
 import 'package:elderly_care/models/user_model.dart';
+import 'package:elderly_care/pages/profile/medical_records_page.dart';
 import 'package:elderly_care/pages/profile/update_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -119,6 +120,12 @@ class ProfilePage extends StatelessWidget {
                 icon: LineAwesomeIcons.user_check_solid,
                 onPress: () {},
               ),
+              ProfileMenuWidget(
+                title: "Medical Records",
+                icon: LineAwesomeIcons.clinic_medical_solid,
+                onPress: () {
+                  Get.to(() => const MedicalRecordsPage());
+                  },),
               ProfileMenuWidget(
                 title: "Privacy and Policies",
                 icon: LineAwesomeIcons.info_circle_solid,

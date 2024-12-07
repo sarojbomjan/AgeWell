@@ -1,9 +1,42 @@
 import "package:elderly_care/screens/otp_screen.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:get/get.dart";
 
-class ForgotPasswordMail extends StatelessWidget {
+class ForgotPasswordMail extends StatefulWidget {
   const ForgotPasswordMail({super.key});
+
+  @override
+  State<ForgotPasswordMail> createState() => _ForgotPasswordMailState();
+}
+
+class _ForgotPasswordMailState extends State<ForgotPasswordMail> {
+  final _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future passwordReset() async{
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _emailController.text.trim());
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Text('Password reset link sent! Check your email'),
+        );
+      });
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          content: Text(e.message.toString()),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +76,10 @@ class ForgotPasswordMail extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Get.to(() => const OTPScreeen());
-                          },
+                          onPressed: passwordReset,
+                            //   () {
+                            // Get.to(() => const OTPScreeen());
+                          // },
                           child: const Text("Next"),
                         ),
                       ),

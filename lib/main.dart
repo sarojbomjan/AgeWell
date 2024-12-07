@@ -1,3 +1,4 @@
+import 'package:elderly_care/controller/login_controller.dart';
 import 'package:elderly_care/firebase_options.dart';
 import 'package:elderly_care/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,6 +16,7 @@ void main() async {
   // Initialize StoreUser and UserAuthentication once Firebase is initialized
   Get.put(UserAuthentication());
   Get.put(StoreUser());
+  Get.put(LoginController());
 
   runApp(MyApp());
 }
