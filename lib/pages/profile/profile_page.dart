@@ -6,6 +6,7 @@ import 'package:elderly_care/pages/profile/update_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:elderly_care/pages/Payment/esewa_payment_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -126,6 +127,12 @@ class ProfilePage extends StatelessWidget {
                 onPress: () {
                   Get.to(() => const MedicalRecordsPage());
                   },),
+              ProfileMenuWidget(
+                title: "Payment",
+                icon: LineAwesomeIcons.wallet_solid,
+                onPress: () {
+                  EsewaPaymentPage().esewapayment();
+                },),
               ProfileMenuWidget(
                 title: "Privacy and Policies",
                 icon: LineAwesomeIcons.info_circle_solid,
