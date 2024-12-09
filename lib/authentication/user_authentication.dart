@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/authentication/authentication_exception.dart/signup_email_password_failure.dart';
 import 'package:elderly_care/authentication/store_user_details.dart';
 import 'package:elderly_care/models/user_model.dart';
@@ -6,6 +7,7 @@ import 'package:elderly_care/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../admin_dashboard/pages/admin_dashboard.dart';
 import 'authentication_exception.dart/login_fauilure.dart';
 
 class UserAuthentication extends GetxController {
@@ -29,17 +31,48 @@ class UserAuthentication extends GetxController {
     ever(firebaseUser, _setInitialScreen);
   }
 
-  // Navigates based on user state
-  _setInitialScreen(User? user) {
-    if (user == null) {
-      // If no user, go to Welcome screen
-      Get.offAll(() => const WelcomeScreen());
-    } else {
-      // If user is logged in, navigate to HomePage
-      // Get.offAll(() => const HomePage());
-      Get.offAll(() => HomeScreen());
+  Future<String?> _getUserRole(String uid) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection('USERS').doc(uid).get();
+      return doc['Role'] as String?;
+    } catch (e) {
+      print("Error fetching user role: $e");
+      return null;
     }
   }
+
+  _setInitialScreen(User? user) async {
+    if (user == null) {
+      Get.offAll(() => const WelcomeScreen(),
+          transition: Transition.fadeIn,
+          duration: const Duration(milliseconds: 500));
+    } else {
+      final role = await _getUserRole(user.uid);
+      if (role == 'admin') {
+        Get.offAll(() => const AdminDashboard(),
+            transition: Transition.rightToLeft,
+            duration: const Duration(milliseconds: 500));
+      } else {
+        Get.offAll(() => const HomeScreen(),
+            transition: Transition.leftToRight,
+            duration: const Duration(milliseconds: 500));
+      }
+    }
+  }
+
+  // _setInitialScreen(User? user) async {
+  //   if (user == null) {
+  //     Get.offAll(() => const WelcomeScreen());
+  //   } else {
+  //     final role = await _getUserRole(user.uid);
+  //     if (role == 'admin') {
+  //       Get.offAll(() => const AdminDashboard());
+  //     } else {
+  //       Get.offAll(() => const HomeScreen());
+  //     }
+  //   }
+  // }
 
   // get current user
   User? getCurrentUser() {

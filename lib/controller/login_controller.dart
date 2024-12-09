@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:elderly_care/admin_dashboard/pages/admin_dashboard.dart';
 import 'package:elderly_care/authentication/authentication_exception.dart/login_fauilure.dart';
 import 'package:elderly_care/authentication/user_authentication.dart';
 import 'package:elderly_care/pages/home/home.dart';
@@ -14,19 +16,64 @@ class LoginController extends GetxController {
   final isFacebookLoading = false.obs;
 
   // sign user in method
+  // Future<void> signUserIn(
+  //     String email, String password, BuildContext context) async {
+  //   try {
+  //     // Start loading
+  //     isLoading.value = true;
+
+  //     // Sign in using Firebase
+  //     await FirebaseAuth.instance.signInWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
+  //     // If successful, navigate to HomePage
+  //     Get.offAll(() => const HomeScreen());
+  //   } on FirebaseAuthException catch (e) {
+  //     final ex = LoginWithEmailAndPasswordFailure.code(e.code);
+
+  //     // Show the appropriate error message
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(ex.message)),
+  //     );
+  //   } catch (e) {
+  //     // If an unknown error occurs
+  //     const ex = LoginWithEmailAndPasswordFailure();
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(ex.message)),
+  //     );
+  //   } finally {
+  //     // End loading
+  //     isLoading.value = false;
+  //   }
+  // }
+
   Future<void> signUserIn(
       String email, String password, BuildContext context) async {
     try {
       // Start loading
       isLoading.value = true;
 
-      // Sign in using Firebase
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      // If successful, navigate to HomePage
-      Get.offAll(() => const HomeScreen());
+      // Sign in using Firebase Authentication
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      // Fetch user role from Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection('USERS')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      final role = userDoc['Role'];
+
+      // Navigate to the appropriate screen based on the role
+      if (role == 'admin') {
+        Get.offAll(() => const AdminDashboard());
+      } else if (role == 'customer') {
+        Get.offAll(() => HomeScreen());
+      } else {
+        throw Exception('Unknown user role');
+      }
     } on FirebaseAuthException catch (e) {
       final ex = LoginWithEmailAndPasswordFailure.code(e.code);
 

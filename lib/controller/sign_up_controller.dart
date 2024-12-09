@@ -1,9 +1,6 @@
-import "package:elderly_care/authentication/store_user_details.dart";
 import "package:elderly_care/authentication/user_authentication.dart";
 import "package:flutter/material.dart";
 import "package:get/get.dart";
-
-import "../models/user_model.dart";
 
 class SignUpController extends GetxController {
   static SignUpController get instance => Get.find();
