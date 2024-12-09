@@ -20,8 +20,8 @@ class ProfileController extends GetxController {
   final _userAuth = Get.put(UserAuthentication());
   final _storeUser = Get.put(StoreUser());
 
-  var user = Rx<UserModel?>(null);
-  // Reactive variable to hold user details
+  var user = Rx<UserModel?>(null); // Reactive variable to hold user details
+
   @override
   void onInit() {
     super.onInit();
@@ -101,7 +101,7 @@ class ProfileController extends GetxController {
       await currentUser.reauthenticateWithCredential(authCredential);
 
       // First, delete user from Firestore
-      await deleteUserFromFirestore(userData!.id!);
+      await deleteUserFromFirestore(userData!.uid!);
 
       // Then, delete user from Firebase Authentication
       await deleteUserFromAuth(password);

@@ -16,25 +16,18 @@ class SignUpController extends GetxController {
   final address = TextEditingController();
 
   // register user function
-  void registerUser(String email, String password) {
-    UserAuthentication.instance.createUserWithEmailAndPassword(email, password);
+  Future<void> registerUser() async {
+    await UserAuthentication.instance.createUserWithEmailAndPassword(
+      email.text.trim(),
+      password.text.trim(),
+      fullName.text.trim(),
+      phoneNo.text.trim(),
+      address.text.trim(),
+    );
   }
 
   // phone verification
   void phoneAuthentication(String phoneNo) {
     UserAuthentication.instance.phoneAuthentication(phoneNo);
-  }
-
-  // store user in Firestore
-  Future<void> storeUser() async {
-    UserModel user = UserModel(
-      fullName: fullName.text.trim(),
-      email: email.text.trim(),
-      phoneNo: phoneNo.text.trim(),
-      address: address.text.trim(),
-      role: 'customer',
-    );
-
-    await StoreUser.instance.createUser(user);
   }
 }

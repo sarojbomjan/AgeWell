@@ -14,10 +14,6 @@ class UpdateProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(ProfileController());
 
-    // final fullnameController = TextEditingController();
-    // final emailController = TextEditingController();
-    // final phoneController = TextEditingController();
-    //final passwordController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -121,8 +117,8 @@ class UpdateProfile extends StatelessWidget {
                                     .getUserData(); // Fetch the current user data
                                 if (userData != null) {
                                   final updatedUser = UserModel(
-                                    id: userData
-                                        .id, // Ensure the ID from the fetched user is passed
+                                    uid: userData
+                                        .uid, // Ensure the ID from the fetched user is passed
                                     fullName: controller.fullname.text.trim(),
                                     email: controller.email.text.trim(),
                                     phoneNo: controller.phoneNo.text.trim(),

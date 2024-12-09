@@ -1,6 +1,6 @@
 import 'package:elderly_care/authentication/authentication_exception.dart/login_fauilure.dart';
 import 'package:elderly_care/authentication/user_authentication.dart';
-import 'package:elderly_care/pages/home/home_page.dart';
+import 'package:elderly_care/pages/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,7 +26,7 @@ class LoginController extends GetxController {
         password: password,
       );
       // If successful, navigate to HomePage
-      Get.offAll(() => const HomePage());
+      Get.offAll(() => const HomeScreen());
     } on FirebaseAuthException catch (e) {
       final ex = LoginWithEmailAndPasswordFailure.code(e.code);
 

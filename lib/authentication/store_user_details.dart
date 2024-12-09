@@ -13,7 +13,7 @@ class StoreUser extends GetxController {
   // stores data in firestore database
   Future<void> createUser(UserModel user) async {
     try {
-      await _db.collection("USERS").add(user.toJson());
+      await _db.collection("USERS").doc(user.uid).set(user.toJson());
 
       Get.snackbar(
         "Success", // Title
@@ -55,13 +55,13 @@ class StoreUser extends GetxController {
     return userData;
   }
 
-// update user record
+  // update user record
   Future<void> updateUserRecord(UserModel user) async {
     try {
-      if (user.id == null) {
+      if (user.uid == null) {
         throw Exception("User ID is null. Cannot update record.");
       }
-      await _db.collection("USERS").doc(user.id).update(user.toJson());
+      await _db.collection("USERS").doc(user.uid).update(user.toJson());
 
       Get.snackbar(
         "Success", // Title
@@ -84,7 +84,7 @@ class StoreUser extends GetxController {
     }
   }
 
-// Delete the user record from Firestore
+  // Delete the user record from Firestore
   Future<void> deleteUserFromFirestore(String userId) async {
     try {
       await _db.collection("USERS").doc(userId).delete();

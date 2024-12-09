@@ -193,18 +193,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 // Sign Up button
                 MyButton(
-                    text: "Sign Up",
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        // First register user with email and password
-                        SignUpController.instance.registerUser(
-                            controller.email.text.trim(),
-                            controller.password.text.trim());
-
-                        // After registration, store the user details
-                        SignUpController.instance.storeUser();
-                        // SignUpController.instance.phoneAuthentication(
-                        //     controller.phoneNo.text.trim());
+                  text: "Sign Up",
+                  onTap: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        // Register user with email and password
+                        await controller.registerUser();
 
                         // Clear text fields after successful registration
                         controller.fullName.clear();
@@ -212,8 +206,28 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller.phoneNo.clear();
                         controller.address.clear();
                         controller.password.clear();
+
+                        // Show success message or navigate
+                        Get.snackbar(
+                          "Success",
+                          "Account created successfully!",
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.green,
+                          colorText: Colors.white,
+                        );
+                      } catch (e) {
+                        // Handle errors (e.g., Firebase or validation errors)
+                        Get.snackbar(
+                          "Error",
+                          e.toString(),
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
                       }
-                    }),
+                    }
+                  },
+                ),
 
                 const SizedBox(height: 40),
 

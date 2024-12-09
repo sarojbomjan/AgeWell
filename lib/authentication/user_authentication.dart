@@ -1,17 +1,19 @@
 import 'package:elderly_care/authentication/authentication_exception.dart/signup_email_password_failure.dart';
-import 'package:elderly_care/pages/home/home_page.dart';
+import 'package:elderly_care/authentication/store_user_details.dart';
+import 'package:elderly_care/models/user_model.dart';
+import 'package:elderly_care/pages/home/home.dart';
 import 'package:elderly_care/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'authentication_exception.dart/login_fauilure.dart';
 
 class UserAuthentication extends GetxController {
   static UserAuthentication get instance => Get.find();
 
   final _auth = FirebaseAuth.instance;
-  late final Rx<User?> firebaseUser;
+  //late final Rx<User?> firebaseUser;
+  Rx<User?> firebaseUser = Rx<User?>(null);
   var verificationId = ''.obs;
 
   /// Checks if the user is already logged in or not
@@ -34,8 +36,14 @@ class UserAuthentication extends GetxController {
       Get.offAll(() => const WelcomeScreen());
     } else {
       // If user is logged in, navigate to HomePage
-      Get.offAll(() => const HomePage());
+      // Get.offAll(() => const HomePage());
+      Get.offAll(() => HomeScreen());
     }
+  }
+
+  // get current user
+  User? getCurrentUser() {
+    return _auth.currentUser;
   }
 
   // phone authentication
@@ -69,21 +77,37 @@ class UserAuthentication extends GetxController {
     return credentials.user != null ? true : false;
   }
 
-  // Create user with email and password
-  Future<void> createUserWithEmailAndPassword(
-      String email, String password) async {
+  Future<void> createUserWithEmailAndPassword(String email, String password,
+      String fullName, String phoneNo, String address) async {
     try {
-      await _auth.createUserWithEmailAndPassword(
+      // Create user with email and password
+      final userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      // If user creation is successful, navigate to HomePage
-      firebaseUser.value != null
-          ? Get.offAll(() => const HomePage())
-          : Get.to(() => const WelcomeScreen());
+
+      // Fetch the UID of the newly created user
+      final String? uid = userCredential.user?.uid;
+
+      // Create a user model with the fetched UID
+      final user = UserModel(
+        uid: uid,
+        fullName: fullName,
+        email: email,
+        phoneNo: phoneNo,
+        address: address,
+      );
+
+      // Store the user in Firestore (do this only once)
+      if (uid != null) {
+        await StoreUser.instance.createUser(user);
+      }
+
+      // Navigate to HomePage after successful registration
+      Get.offAll(() => const HomeScreen());
     } on FirebaseAuthException catch (e) {
       // Handle FirebaseAuthException and map it to custom failure message
       final ex = SignupWithEmailAndPasswordFailure.code(e.code);
       print("FIREBASE AUTH EXCEPTION - ${ex.message}");
-      throw ex; // Throw the custom failure for further handling
+      throw ex;
     } catch (_) {
       // Handle any other unexpected errors
       const ex = SignupWithEmailAndPasswordFailure();
@@ -91,6 +115,7 @@ class UserAuthentication extends GetxController {
       throw ex;
     }
   }
+
   // Google authentication
 
   Future<UserCredential?> signInWithGoogle() async {
@@ -115,7 +140,7 @@ class UserAuthentication extends GetxController {
       // Once signed in, return the UserCredential
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
-      Get.offAll(() => const HomePage());
+      Get.offAll(() => const HomeScreen());
       return userCredential;
     } catch (e) {
       Get.snackbar("Error", "Google Sign-In failed. Please try again.");
@@ -131,7 +156,7 @@ class UserAuthentication extends GetxController {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
 
       // If login is successful, navigate to HomePage
-      Get.offAll(() => const HomePage());
+      Get.offAll(() => const HomeScreen());
     } on FirebaseAuthException catch (e) {
       final ex = LoginWithEmailAndPasswordFailure.code(e.code);
 
