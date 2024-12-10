@@ -58,6 +58,7 @@ dependencies:
   fl_chart: ^0.69.2
   esewa_flutter_sdk:
     path: ./esewa_sdk/esewa_flutter_sdk
+  esewa_flutter: ^2.0.0
 
 dev_dependencies:
   flutter_test:
