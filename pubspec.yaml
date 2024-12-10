@@ -56,6 +56,8 @@ dependencies:
   mobile_scanner: ^6.0.2
   pretty_qr_code: ^3.3.0
   fl_chart: ^0.69.2
+  esewa_flutter_sdk:
+    path: ./esewa_sdk/esewa_flutter_sdk
 
 dev_dependencies:
   flutter_test:

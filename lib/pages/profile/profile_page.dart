@@ -4,7 +4,12 @@ import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:elderly_care/controller/profile_controller.dart';
 import 'package:elderly_care/models/user_model.dart';
+import 'package:elderly_care/pages/profile/medical_records_page.dart';
 import 'package:elderly_care/pages/profile/update_profile.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:elderly_care/pages/Payment/esewa_payment_page.dart';
 import 'package:elderly_care/pages/qrcodes/generate_qr_code.dart';
 import 'package:elderly_care/constants/color.dart';
 
@@ -134,6 +139,18 @@ class ProfilePage extends StatelessWidget {
                   icon: LineAwesomeIcons.user_check_solid,
                   onPress: () {},
                 ),
+                ProfileMenuWidget(
+                  title: "Medical Records",
+                  icon: LineAwesomeIcons.clinic_medical_solid,
+                  onPress: () {
+                    Get.to(() => const MedicalRecordsPage());
+                  },),
+                ProfileMenuWidget(
+                  title: "Payment",
+                  icon: LineAwesomeIcons.wallet_solid,
+                  onPress: () {
+                    EsewaPaymentPage().esewapayment();
+                  },),
                 ProfileMenuWidget(
                   title: "Privacy and Policies",
                   icon: LineAwesomeIcons.info_circle_solid,
