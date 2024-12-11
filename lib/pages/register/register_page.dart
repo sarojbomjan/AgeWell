@@ -35,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _controller = Get.put(LoginController());
+    //final _controller = Get.put(LoginController());
     // Access the theme
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;

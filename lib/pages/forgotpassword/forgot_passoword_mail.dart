@@ -1,7 +1,5 @@
-import "package:elderly_care/screens/otp_screen.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
-import "package:get/get.dart";
 
 class ForgotPasswordMail extends StatefulWidget {
   const ForgotPasswordMail({super.key});
@@ -19,22 +17,26 @@ class _ForgotPasswordMailState extends State<ForgotPasswordMail> {
     super.dispose();
   }
 
-  Future passwordReset() async{
+  Future passwordReset() async {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: _emailController.text.trim());
-      showDialog(context: context, builder: (context) {
-        return AlertDialog(
-          content: Text('Password reset link sent! Check your email'),
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text('Password reset link sent! Check your email'),
+            );
+          });
     } on FirebaseAuthException catch (e) {
       print(e);
-      showDialog(context: context, builder: (context) {
-        return AlertDialog(
-          content: Text(e.message.toString()),
-        );
-      });
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text(e.message.toString()),
+            );
+          });
     }
   }
 
@@ -66,6 +68,7 @@ class _ForgotPasswordMailState extends State<ForgotPasswordMail> {
                   child: Column(
                     children: [
                       TextFormField(
+                        controller: _emailController,
                         decoration: const InputDecoration(
                           labelText: "E-mail",
                           hintText: "Enter your email",
@@ -77,8 +80,8 @@ class _ForgotPasswordMailState extends State<ForgotPasswordMail> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: passwordReset,
-                            //   () {
-                            // Get.to(() => const OTPScreeen());
+                          //   () {
+                          // Get.to(() => const OTPScreeen());
                           // },
                           child: const Text("Next"),
                         ),

@@ -21,10 +21,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  // Method to handle navigation tab changes
   void _onNavTap(int index) {
     setState(() {
-      print("Current index: $index");
       _currentIndex = index;
     });
   }
@@ -35,27 +33,34 @@ class _HomeScreenState extends State<HomeScreen> {
     var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     final List<Widget> _pages = [
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            //  const GreetingWidget(),
+      CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  // Spacing and Greeting Widget
+                  SizedBox(height: 24),
 
-            const SizedBox(height: 24),
+                  // Upcoming Activities
+                  UpcomingActivities(),
 
-            // Upcoming Activities
-            const UpcomingActivities(),
+                  SizedBox(height: 24),
 
-            const SizedBox(height: 24),
+                  // Today Activities
+                  TodayActivities(),
 
-            // Today Activities
-            const TodayActivities(),
+                  SizedBox(height: 24),
 
-            const SizedBox(height: 24),
-
-            // Health Summary
-            const HealthMetrics(),
-          ],
-        ),
+                  // Health Metrics
+                  HealthMetrics(),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       const Health(),
       Community(),
@@ -66,23 +71,20 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('ElderCare'),
         actions: [
-          // Dark mode toggle
           IconButton(
             onPressed: () {
               setState(() {
-                // Toggle between dark and light mode manually here if necessary
+                // Manually toggle dark/light mode if needed
               });
             },
             icon: Icon(isDark ? LineAwesomeIcons.sun : LineAwesomeIcons.moon),
           ),
-          // Logout Button
           IconButton(
             onPressed: () {
               UserAuthentication.instance.logout();
             },
             icon: const Icon(Icons.logout),
           ),
-          // Settings Button
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
@@ -94,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _pages[_currentIndex], // Display selected page based on index
+      body: _pages[_currentIndex],
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           // Emergency button functionality
@@ -103,7 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
         label: const Text('SOS'),
         backgroundColor: Colors.red,
       ),
-      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onNavTap,
