@@ -1,4 +1,4 @@
-import 'package:elderly_care/pages/services_booking/doctor_profile.dart';
+import 'package:elderly_care/pages/services_booking/doctor_service/doctor_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

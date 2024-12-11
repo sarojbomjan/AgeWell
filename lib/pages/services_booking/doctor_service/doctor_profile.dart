@@ -1,4 +1,4 @@
-import 'package:elderly_care/pages/services_booking/doctor_appointment_booking.dart';
+import 'package:elderly_care/pages/services_booking/doctor_service/doctor_appointment_booking.dart';
 import 'package:flutter/material.dart';
 
 class DoctorProfile extends StatelessWidget {
