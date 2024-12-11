@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddUserModal extends StatefulWidget {
-  final Function(Map<String, String>) onAddUser;
-
-  const AddUserModal({Key? key, required this.onAddUser}) : super(key: key);
+  const AddUserModal({Key? key}) : super(key: key);
 
   @override
   _AddUserModalState createState() => _AddUserModalState();
@@ -26,16 +25,29 @@ class _AddUserModalState extends State<AddUserModal> {
     super.dispose();
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      widget.onAddUser({
-        'name': _nameController.text,
-        'email': _emailController.text,
-        'address': _addressController.text,
-        'phone': _phoneController.text,
-        'role': _selectedRole,
-      });
-      Navigator.of(context).pop();
+      // User data to save in Firestore
+      final userData = {
+        'FullName': _nameController.text,
+        'Email': _emailController.text,
+        'Address': _addressController.text,
+        'Phone': _phoneController.text,
+        'Role': _selectedRole,
+      };
+
+      try {
+        // Save to Firestore
+        await FirebaseFirestore.instance.collection('USERS').add(userData);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User added successfully!')),
+        );
+        Navigator.of(context).pop();
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to add user. Try again.')),
+        );
+      }
     }
   }
 

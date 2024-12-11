@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/pages/home/home_widgets/activity.dart';
 import 'package:flutter/material.dart';
-
 import '../home_functionalities/add_activity.dart';
 
 class TodayActivities extends StatelessWidget {
@@ -126,6 +125,6 @@ class TodayActivities extends StatelessWidget {
     }
 
     // Adjust color brightness based on theme mode
-    return brightness == Brightness.dark ? color! : color;
+    return brightness == Brightness.dark ? color : color;
   }
 }

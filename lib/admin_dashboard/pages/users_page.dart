@@ -1,6 +1,5 @@
-import 'package:elderly_care/service/mock_data.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../components/add_new_user.dart';
 
 class UsersPage extends StatefulWidget {
@@ -11,23 +10,40 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  @override
-  Widget build(BuildContext context) {
-    final userTypes = MockDataService.getUserTypeBreakdown();
+  final Map<String, int> userTypes = {};
 
-    void _handleAddUser(Map<String, String> userData) {
-      // In a real app, you would add the user to your database here
-      // For this example, we'll just update the user count
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('USERS') // Replace with your collection name
+          .get();
+
+      final Map<String, int> fetchedUserTypes = {};
+
+      for (var doc in querySnapshot.docs) {
+        final role = doc['Role'] as String? ?? 'Unknown';
+        fetchedUserTypes[role] = (fetchedUserTypes[role] ?? 0) + 1;
+      }
+
       setState(() {
-        userTypes[userData['role']!] = (userTypes[userData['role']] ?? 0) + 1;
+        userTypes.clear();
+        userTypes.addAll(fetchedUserTypes);
       });
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Text('New ${userData['role']} added: ${userData['name']}')),
+        SnackBar(content: Text('Error fetching user data: $e')),
       );
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -49,22 +65,32 @@ class _UsersPageState extends State<UsersPage> {
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 16),
-                  ...userTypes.entries
-                      .map((entry) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(entry.key,
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge),
-                                Text(entry.value.toString(),
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge),
-                              ],
-                            ),
-                          ))
-                      .toList(),
+                  userTypes.isEmpty
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Column(
+                          children: userTypes.entries
+                              .map((entry) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(entry.key,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge),
+                                        Text(entry.value.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge),
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
                 ],
               ),
             ),
@@ -75,9 +101,10 @@ class _UsersPageState extends State<UsersPage> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return AddUserModal(onAddUser: _handleAddUser);
+                  return const AddUserModal(); // No onAddUser required
                 },
-              );
+              ).then((_) =>
+                  _fetchUserData()); // Refresh user data after modal closes
             },
             child: const Text('Add New User'),
           ),

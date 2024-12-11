@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/stat_card.dart';
-import '../widgets/latest_update.dart';
 import '../widgets/user_role.dart';
-import '../../service/mock_data.dart';
 
 class DashboardOverview extends StatelessWidget {
   const DashboardOverview({Key? key}) : super(key: key);
@@ -28,30 +26,28 @@ class DashboardOverview extends StatelessWidget {
             children: [
               StatCard(
                 title: 'Total Users',
-                value: MockDataService.getTotalUsers().toString(),
+                collectionName: 'USERS',
                 icon: Icons.people,
               ),
-              StatCard(
-                title: 'Services Booked',
-                value: MockDataService.getTotalServicesBooked().toString(),
-                icon: Icons.calendar_today,
-              ),
-              StatCard(
-                title: 'Health Alerts',
-                value: MockDataService.getHealthAlerts().toString(),
-                icon: Icons.health_and_safety,
-              ),
-              StatCard(
-                title: 'Active Locations',
-                value: MockDataService.getActiveLocations().toString(),
-                icon: Icons.location_on,
-              ),
+              // StatCard(
+              //   title: 'Services Booked',
+              //   collectionName: 'services_booked',
+              //   icon: Icons.calendar_today,
+              // ),
+              // StatCard(
+              //   title: 'Health Alerts',
+              //   collectionName: 'health_alerts',
+              //   icon: Icons.health_and_safety,
+              // ),
+              // StatCard(
+              //   title: 'Active Locations',
+              //   collectionName: 'active_locations',
+              //   icon: Icons.location_on,
+              // ),
             ],
           ),
           const SizedBox(height: 24),
-          LatestUpdates(updates: MockDataService.getLatestUpdates()),
-          const SizedBox(height: 24),
-          UserTypeBreakdown(userTypes: MockDataService.getUserTypeBreakdown()),
+          UserTypeBreakdown(), // Dynamically fetch user types
         ],
       ),
     );

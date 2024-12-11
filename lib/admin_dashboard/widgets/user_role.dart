@@ -1,11 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class UserTypeBreakdown extends StatelessWidget {
-  final Map<String, int> userTypes;
-
-  const UserTypeBreakdown({Key? key, required this.userTypes})
-      : super(key: key);
+  const UserTypeBreakdown({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,21 +19,52 @@ class UserTypeBreakdown extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: PieChart(
-                PieChartData(
-                  sections: _createPieChartSections(),
-                  sectionsSpace: 0,
-                  centerSpaceRadius: 40,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Column(
-              children: userTypes.entries.map((entry) {
-                return _buildLegendItem(context, entry.key, entry.value);
-              }).toList(),
+            StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('USERS').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.hasError || !snapshot.hasData) {
+                  return const Center(
+                    child: Text('Error fetching user types'),
+                  );
+                }
+
+                // Count user types
+                final userDocs = snapshot.data!.docs;
+                final Map<String, int> userTypeCounts = {};
+                for (var doc in userDocs) {
+                  final userType = doc['Role'] ?? 'Unknown';
+                  userTypeCounts[userType] =
+                      (userTypeCounts[userType] ?? 0) + 1;
+                }
+
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 200,
+                      child: PieChart(
+                        PieChartData(
+                          sections: _createPieChartSections(userTypeCounts),
+                          sectionsSpace: 0,
+                          centerSpaceRadius: 40,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      children: userTypeCounts.entries.map((entry) {
+                        return _buildLegendItem(
+                            context, entry.key, entry.value);
+                      }).toList(),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -43,20 +72,23 @@ class UserTypeBreakdown extends StatelessWidget {
     );
   }
 
-  List<PieChartSectionData> _createPieChartSections() {
+  List<PieChartSectionData> _createPieChartSections(
+      Map<String, int> userTypeCounts) {
     final List<Color> colors = [
       Colors.blue,
       Colors.green,
       Colors.orange,
       Colors.purple,
+      Colors.red,
+      Colors.cyan,
     ];
 
-    return userTypes.entries.map((entry) {
-      final index = userTypes.keys.toList().indexOf(entry.key);
+    return userTypeCounts.entries.map((entry) {
+      final index = userTypeCounts.keys.toList().indexOf(entry.key);
       return PieChartSectionData(
         color: colors[index % colors.length],
         value: entry.value.toDouble(),
-        title: '',
+        title: entry.value.toString(),
         radius: 50,
       );
     }).toList();

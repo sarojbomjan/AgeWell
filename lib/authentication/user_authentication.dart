@@ -42,37 +42,25 @@ class UserAuthentication extends GetxController {
     }
   }
 
+  // based on users role , redirects them to different dashboard
   _setInitialScreen(User? user) async {
     if (user == null) {
-      Get.offAll(() => const WelcomeScreen(),
-          transition: Transition.fadeIn,
-          duration: const Duration(milliseconds: 500));
+      Get.offAll(
+        () => const WelcomeScreen(),
+      );
     } else {
       final role = await _getUserRole(user.uid);
       if (role == 'admin') {
-        Get.offAll(() => const AdminDashboard(),
-            transition: Transition.rightToLeft,
-            duration: const Duration(milliseconds: 500));
+        Get.offAll(
+          () => const AdminDashboard(),
+        );
       } else {
-        Get.offAll(() => const HomeScreen(),
-            transition: Transition.leftToRight,
-            duration: const Duration(milliseconds: 500));
+        Get.offAll(
+          () => const HomeScreen(),
+        );
       }
     }
   }
-
-  // _setInitialScreen(User? user) async {
-  //   if (user == null) {
-  //     Get.offAll(() => const WelcomeScreen());
-  //   } else {
-  //     final role = await _getUserRole(user.uid);
-  //     if (role == 'admin') {
-  //       Get.offAll(() => const AdminDashboard());
-  //     } else {
-  //       Get.offAll(() => const HomeScreen());
-  //     }
-  //   }
-  // }
 
   // get current user
   User? getCurrentUser() {
