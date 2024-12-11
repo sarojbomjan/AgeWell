@@ -48,7 +48,7 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
     final String currentMonth = "${now.month}, ${now.year}";
-    final String currentDay = days[now.weekday - 1]; // Get the weekday
+    // final String currentDay = days[now.weekday - 1]; // Get the weekday
 
     return Scaffold(
       backgroundColor: Colors.white,

@@ -16,10 +16,6 @@ class _CaretakerProfileState extends State<CaretakerProfile> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _specialNotesController = TextEditingController();
 
-  bool _isDay = false;
-  bool _isEvening = false;
-  bool _isNight = false;
-  bool _isFullTime = false;
   final List<String> availableTimes = [
     "Morning",
     "Evening",
