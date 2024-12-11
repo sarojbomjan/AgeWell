@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/services_booking/caretaker_appointment.dart';
 import 'package:elderly_care/pages/services_booking/doctor_appointment.dart';
 import 'package:flutter/material.dart';
 
@@ -55,12 +56,21 @@ class Booking extends StatelessWidget {
                   ),
 
                   const SizedBox(width: 10),
-                  CategoryCard(
-                    title: 'Caretaker',
-                    subtitle: 'Hire',
-                    icon: Icons.handyman,
-                    backgroundColor: Colors.orange,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CaretakerAppointment()),
+                      );
+                    },
+                    child: const CategoryCard(
+                      title: 'Caretaker',
+                      subtitle: 'Hire',
+                      icon: Icons.handyman,
+                      backgroundColor: Colors.orange,
+                    ),
                   ),
+
                   const SizedBox(width: 10),
                   CategoryCard(
                     title: 'Old Age Home',
