@@ -2,14 +2,14 @@ import 'package:elderly_care/pages/services_booking/caretaker_service/caretaker_
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class CaretakerAppointment extends StatefulWidget {
-  const CaretakerAppointment({super.key});
+class CaretakerPage extends StatefulWidget {
+  const CaretakerPage({super.key});
 
   @override
-  State<CaretakerAppointment> createState() => _CaretakerAppointmentState();
+  State<CaretakerPage> createState() => _CaretakerPageState();
 }
 
-class _CaretakerAppointmentState extends State<CaretakerAppointment> {
+class _CaretakerPageState extends State<CaretakerPage> {
   List<String> generateDays() {
     final now = DateTime.now();
     return List.generate(7, (index) {

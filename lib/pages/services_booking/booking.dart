@@ -1,5 +1,6 @@
-import 'package:elderly_care/pages/services_booking/caretaker_appointment.dart';
-import 'package:elderly_care/pages/services_booking/doctor_appointment.dart';
+import 'package:elderly_care/pages/services_booking/caretaker_page.dart';
+import 'package:elderly_care/pages/services_booking/doctor_page.dart';
+import 'package:elderly_care/pages/services_booking/old_age_home_page.dart';
 import 'package:flutter/material.dart';
 
 class Booking extends StatelessWidget {
@@ -44,7 +45,7 @@ class Booking extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const DoctorAppointment()),
+                        MaterialPageRoute(builder: (context) => const DoctorPage()),
                       );
                     },
                     child: const CategoryCard(
@@ -60,7 +61,7 @@ class Booking extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CaretakerAppointment()),
+                        MaterialPageRoute(builder: (context) => const CaretakerPage()),
                       );
                     },
                     child: const CategoryCard(
@@ -72,11 +73,19 @@ class Booking extends StatelessWidget {
                   ),
 
                   const SizedBox(width: 10),
-                  CategoryCard(
-                    title: 'Old Age Home',
-                    subtitle: 'Join',
-                    icon: Icons.home,
-                    backgroundColor: Colors.blue,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const OldAgeHomePage()),
+                      );
+                    },
+                    child: const CategoryCard(
+                      title: 'Old Age Home',
+                      subtitle: 'Join',
+                      icon: Icons.home,
+                      backgroundColor: Colors.blue,
+                    ),
                   ),
                 ],
               ),

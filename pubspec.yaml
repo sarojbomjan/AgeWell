@@ -77,13 +77,13 @@ dev_dependencies:
 flutter_native_splash:
   color: "#f7f6f1"
   color_dark: "#272727"
-  image: lib/images/elder.jpg
-  image_dark: lib/images/elder.jpg
+  image: lib/images/age_well_logo.png
+  image_dark: lib/images/age_well_logo.png
 
   android_12:
-    image: lib/images/elder.jpg
+    image: lib/images/age_well_logo.png
     icon_background_color: "#f7f6f1"
-    image_dark: lib/images/elder.jpg
+    image_dark: lib/images/age_well_logo.png
     icon_background_color_dark: "272727"
 # The following section is specific to Flutter packages.
 flutter:

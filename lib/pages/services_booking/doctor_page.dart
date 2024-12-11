@@ -2,14 +2,14 @@ import 'package:elderly_care/pages/services_booking/doctor_service/doctor_profil
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DoctorAppointment extends StatefulWidget {
-  const DoctorAppointment({super.key});
+class DoctorPage extends StatefulWidget {
+  const DoctorPage({super.key});
 
   @override
-  State<DoctorAppointment> createState() => _DoctorAppointmentState();
+  State<DoctorPage> createState() => _DoctorPageState();
 }
 
-class _DoctorAppointmentState extends State<DoctorAppointment> {
+class _DoctorPageState extends State<DoctorPage> {
   List<String> generateDays() {
     final now = DateTime.now();
     return List.generate(7, (index) {
