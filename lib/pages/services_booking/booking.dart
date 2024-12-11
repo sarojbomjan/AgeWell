@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/services_booking/doctor_appointment.dart';
 import 'package:flutter/material.dart';
 
 class Booking extends StatelessWidget {
@@ -38,12 +39,21 @@ class Booking extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  CategoryCard(
-                    title: 'Doctor',
-                    subtitle: 'Consult',
-                    icon: Icons.person,
-                    backgroundColor: Colors.green,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const DoctorAppointment()),
+                      );
+                    },
+                    child: const CategoryCard(
+                      title: 'Doctor',
+                      subtitle: 'Consult',
+                      icon: Icons.person,
+                      backgroundColor: Colors.green,
+                    ),
                   ),
+
                   const SizedBox(width: 10),
                   CategoryCard(
                     title: 'Caretaker',
