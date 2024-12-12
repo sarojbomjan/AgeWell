@@ -9,7 +9,7 @@ import 'package:elderly_care/pages/profile/update_profile.dart';
 import 'package:elderly_care/pages/Payment/esewa_payment_page.dart';
 import 'package:elderly_care/pages/qrcodes/generate_qr_code.dart';
 import '../../authentication/user_authentication.dart';
-import 'medical_records_page.dart';
+import 'medical_record/medical_records_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
