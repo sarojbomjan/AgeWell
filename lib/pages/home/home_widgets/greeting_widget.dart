@@ -27,7 +27,6 @@ class GreetingWidget extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("UserId: ${userData.uid}"),
               Text(
                 'Hello, ${userData.fullName}', // Display the user's full name
                 style: Theme.of(context).textTheme.headlineMedium,

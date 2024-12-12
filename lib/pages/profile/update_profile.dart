@@ -17,7 +17,7 @@ class UpdateProfile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Navigator.pop(context),
             icon: const Icon(LineAwesomeIcons.angle_left_solid)),
       ),
       body: SingleChildScrollView(
@@ -43,8 +43,7 @@ class UpdateProfile extends StatelessWidget {
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
                                 child: Image(
-                                    image:
-                                        AssetImage("lib/images/google.png"))),
+                                    image: AssetImage("lib/images/user.webp"))),
                           ),
                           Positioned(
                             bottom: 0,
@@ -127,11 +126,10 @@ class UpdateProfile extends StatelessWidget {
 
                                   await controller.updateRecord(updatedUser);
 
-                                  Get.snackbar("Success",
-                                      "Profile updated successfully");
+                                  // Refetch user data to update UI
+                                  await controller.getUserData();
                                 } else {
-                                  Get.snackbar(
-                                      "Error", "Unable to fetch user data.");
+                                  // If user data is not found, it will be handled in the controller already
                                 }
                               },
                               child: const Text(

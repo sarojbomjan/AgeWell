@@ -8,8 +8,7 @@ import 'package:elderly_care/pages/community/user_tile.dart';
 
 class Community extends StatelessWidget {
   final ChatService _chatService = ChatService();
-  final ProfileController profileController =
-      Get.put(ProfileController()); // Initialize ProfileController
+  final ProfileController profileController = Get.put(ProfileController());
 
   Community({Key? key}) : super(key: key);
 
@@ -21,11 +20,10 @@ class Community extends StatelessWidget {
     );
   }
 
-  // Build a list of users except for the currently logged-in user
+  // builds a list of users except for the currently logged-in user
   Widget _buildUserList() {
     return FutureBuilder<UserModel?>(
-      future: profileController
-          .getUserData(), // Use ProfileController to get the current user data
+      future: profileController.getUserData(),
       builder: (context, snapshot) {
         // Error state
         if (snapshot.hasError) {
