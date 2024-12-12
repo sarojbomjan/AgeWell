@@ -1,4 +1,4 @@
-import 'package:elderly_care/admin_dashboard/pages/settings_page.dart';
+import 'package:elderly_care/pages/settings/settings_page.dart';
 import 'package:elderly_care/pages/medical_record/medical_records_page.dart';
 import 'package:elderly_care/pages/profile/profile_menu.dart';
 import 'package:flutter/material.dart';

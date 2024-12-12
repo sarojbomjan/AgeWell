@@ -8,7 +8,7 @@ class PersonalRecordPage extends StatefulWidget {
 }
 
 class _PersonalRecordPageState extends State<PersonalRecordPage> {
-  String gender = 'Female';
+  String gender = 'Male';
   double age = 26;
   double weight = 75;
   double height = 178;
