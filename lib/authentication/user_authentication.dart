@@ -14,6 +14,7 @@ class UserAuthentication extends GetxController {
   static UserAuthentication get instance => Get.find();
 
   final _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   //late final Rx<User?> firebaseUser;
   Rx<User?> firebaseUser = Rx<User?>(null);
   var verificationId = ''.obs;
@@ -141,7 +142,6 @@ class UserAuthentication extends GetxController {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         Get.snackbar("Error", "Google Sign-In was cancelled.");
@@ -161,12 +161,47 @@ class UserAuthentication extends GetxController {
       // Once signed in, return the UserCredential
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
-      Get.offAll(() => const HomeScreen());
+
+      // get the Firebase user from the userCredential
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // Create UserModel instance
+        UserModel userModel = UserModel(
+          uid: user.uid,
+          fullName: user.displayName ?? '',
+          email: user.email ?? '',
+          phoneNo: user.phoneNumber ?? '',
+          address: '',
+          role: 'customer',
+        );
+
+        // Save user data to Firestore
+        await _saveUserDataToFirestore(userModel);
+
+        // Navigate to HomeScreen
+        Get.offAll(() => const HomeScreen());
+      }
+
       return userCredential;
     } catch (e) {
       Get.snackbar("Error", "Google Sign-In failed. Please try again.");
       print("Google Sign-In Error: $e");
       return null;
+    }
+  }
+
+  // Save user data to Firestore using UserModel
+  Future<void> _saveUserDataToFirestore(UserModel userModel) async {
+    try {
+      // Save the user data in Firestore
+      await _firestore.collection('USERS').doc(userModel.uid).set(
+            userModel.toJson(),
+            SetOptions(merge: true), // Merge data if user already exists
+          );
+      print("User data saved to Firestore successfully.");
+    } catch (e) {
+      print("Error saving user data to Firestore: $e");
     }
   }
 
