@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/services_booking/booking.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -91,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       const Health(),
+      Booking(),
       Community(),
       const ProfilePage(),
     ];
