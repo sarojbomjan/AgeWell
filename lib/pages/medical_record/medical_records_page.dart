@@ -1,5 +1,5 @@
-import 'package:elderly_care/pages/profile/medical_record/medical_history_form.dart';
-import 'package:elderly_care/pages/profile/medical_record/personal_record_page.dart';
+import 'package:elderly_care/pages/medical_record/medical_history_form.dart';
+import 'package:elderly_care/pages/medical_record/personal_record_page.dart';
 import 'package:flutter/material.dart';
 
 class MedicalRecordsPage extends StatelessWidget {

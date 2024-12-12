@@ -1,5 +1,6 @@
+import 'package:elderly_care/admin_dashboard/pages/settings_page.dart';
+import 'package:elderly_care/pages/medical_record/medical_records_page.dart';
 import 'package:elderly_care/pages/profile/profile_menu.dart';
-import 'package:elderly_care/pages/services_booking/booking.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -9,7 +10,6 @@ import 'package:elderly_care/pages/profile/update_profile.dart';
 import 'package:elderly_care/pages/Payment/esewa_payment_page.dart';
 import 'package:elderly_care/pages/qrcodes/generate_qr_code.dart';
 import '../../authentication/user_authentication.dart';
-import 'medical_record/medical_records_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -121,7 +121,12 @@ class ProfilePage extends StatelessWidget {
           ProfileMenuWidget(
             title: "Settings",
             icon: LineAwesomeIcons.cog_solid,
-            onPress: () {},
+            onPress: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
           ),
           ProfileMenuWidget(
             title: "User Management",
