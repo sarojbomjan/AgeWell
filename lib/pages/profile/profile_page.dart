@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/privacy_and_policies/privacy_and_policies.dart';
 import 'package:elderly_care/pages/settings/settings_page.dart';
 import 'package:elderly_care/pages/medical_record/medical_records_page.dart';
 import 'package:elderly_care/pages/profile/profile_menu.dart';
@@ -150,7 +151,9 @@ class ProfilePage extends StatelessWidget {
           ProfileMenuWidget(
             title: "Privacy and Policies",
             icon: LineAwesomeIcons.info_circle_solid,
-            onPress: () {},
+            onPress: () {
+              Get.to(() => const PrivacyAndPolicies());
+            },
           ),
           ProfileMenuWidget(
             title: "Generate QR Code",
