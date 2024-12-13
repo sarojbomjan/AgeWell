@@ -1,3 +1,7 @@
+import 'package:elderly_care/authentication/store_user_details.dart';
+import 'package:elderly_care/controller/personal_record_controller.dart';
+import 'package:elderly_care/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 
@@ -9,10 +13,13 @@ class AllergyPage extends StatefulWidget {
 }
 
 class _AllergyPageState extends State<AllergyPage> {
+  final StoreUser _auth = StoreUser();
+
   final List<Map<String, String>> allergies = [
     {
       'name': 'Insulin',
-      'symptoms': 'Skin Symptoms: redness, itching and swelling at injection site.',
+      'symptoms':
+          'Skin Symptoms: redness, itching and swelling at injection site.',
       'date': '10 February 20XX',
     },
     {
@@ -22,7 +29,8 @@ class _AllergyPageState extends State<AllergyPage> {
     },
     {
       'name': 'Pollen',
-      'symptoms': 'Respiratory Symptoms: Sneezing, runny nose, nasal congestion.',
+      'symptoms':
+          'Respiratory Symptoms: Sneezing, runny nose, nasal congestion.',
       'date': '20 October 20XX',
     },
     {
@@ -34,6 +42,51 @@ class _AllergyPageState extends State<AllergyPage> {
 
   final TextEditingController _allergyNameController = TextEditingController();
   final TextEditingController _symptomsController = TextEditingController();
+
+  Map<String, dynamic>? personalRecord;
+  final PersonalRecordController _controller = PersonalRecordController();
+  UserModel? userModel;
+  bool isLoading = true;
+
+  void _fetchUserDetails() async {
+    try {
+      // Assuming you have the email from the FirebaseAuth user
+      String email = FirebaseAuth.instance.currentUser?.email ?? '';
+      if (email.isNotEmpty) {
+        UserModel user = await _auth.getUserDetails(email);
+        setState(() {
+          userModel = user;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      // Handle error (e.g., show an error message)
+      print("Error fetching user details: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserDetails();
+    _fetchPersonalRecord(); // Fetch user details on page load
+  }
+
+  // Fetching the personal record
+  void _fetchPersonalRecord() async {
+    setState(() {
+      isLoading = true;
+    });
+    var record = await _controller.fetchPersonalRecord(context);
+
+    setState(() {
+      personalRecord = record;
+      isLoading = false;
+    });
+  }
 
   void _showAddAllergyDialog() {
     _allergyNameController.clear();
@@ -66,7 +119,8 @@ class _AllergyPageState extends State<AllergyPage> {
             ElevatedButton(
               onPressed: () {
                 // Get the current date in the desired format
-                String formattedDate = DateFormat('dd MMMM yyyy').format(DateTime.now());
+                String formattedDate =
+                    DateFormat('dd MMMM yyyy').format(DateTime.now());
 
                 setState(() {
                   allergies.add({
@@ -150,28 +204,44 @@ class _AllergyPageState extends State<AllergyPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(
+              Center(
                 child: Text(
-                  'Jane Doe',
+                  userModel?.fullName ?? 'No name available',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text('Gender: Female', style: TextStyle(fontSize: 16)),
-                  Text('Blood Type: AB +', style: TextStyle(fontSize: 16)),
-                ],
-              ),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Age: ${personalRecord?['age'] ?? '-'} Years',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          'Blood Type: ${personalRecord?['bloodType'] ?? '-'}',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text('Age: 26 Years', style: TextStyle(fontSize: 16)),
-                  Text('Weight: 65 Kg', style: TextStyle(fontSize: 16)),
-                ],
-              ),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Gender: ${personalRecord?['gender'] ?? '-'}',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          '${personalRecord?['weight'] ?? '-'} Kg',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
               const SizedBox(height: 20),
               const Text(
                 'Allergies',
@@ -213,11 +283,14 @@ class _AllergyPageState extends State<AllergyPage> {
                             Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit, color: Colors.teal),
-                                  onPressed: () => _showEditAllergyDialog(index),
+                                  icon: const Icon(Icons.edit,
+                                      color: Colors.teal),
+                                  onPressed: () =>
+                                      _showEditAllergyDialog(index),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
                                   onPressed: () => _deleteAllergy(index),
                                 ),
                               ],
@@ -234,7 +307,8 @@ class _AllergyPageState extends State<AllergyPage> {
                         const SizedBox(height: 10),
                         Text(
                           'Added Manually ${allergy['date']}',
-                          style: const TextStyle(fontSize: 14, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                       ],
                     ),

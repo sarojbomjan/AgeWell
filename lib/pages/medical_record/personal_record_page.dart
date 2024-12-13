@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:elderly_care/models/personal_record_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class PersonalRecordPage extends StatefulWidget {
@@ -13,7 +16,53 @@ class _PersonalRecordPageState extends State<PersonalRecordPage> {
   double weight = 75;
   double height = 178;
   String bloodType = 'AB +';
-  List<String> bloodTypes = ['A +', 'A -', 'B +', 'B -', 'AB +', 'AB -', 'O +', 'O -'];
+  List<String> bloodTypes = [
+    'A +',
+    'A -',
+    'B +',
+    'B -',
+    'AB +',
+    'AB -',
+    'O +',
+    'O -'
+  ];
+
+  // Save the record
+  void savePersonalRecord() async {
+    try {
+      // Get the current user's ID
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User is not logged in!')),
+        );
+        return;
+      }
+
+      PersonalRecord record = PersonalRecord(
+        gender: gender,
+        age: age,
+        weight: weight,
+        height: height,
+        bloodType: bloodType,
+      );
+
+      // Save the record with userId as the document ID
+      await FirebaseFirestore.instance
+          .collection('Personal Records')
+          .doc(userId) // Use userId as the document ID
+          .set(record.toMap());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Record saved successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save record: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +136,8 @@ class _PersonalRecordPageState extends State<PersonalRecordPage> {
                           bloodType = newValue!;
                         });
                       },
-                      items: bloodTypes.map<DropdownMenuItem<String>>((String value) {
+                      items: bloodTypes
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -100,13 +150,10 @@ class _PersonalRecordPageState extends State<PersonalRecordPage> {
                   ),
                 ),
               ),
-
               SizedBox(height: 30),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Handle save button press
-                  },
+                  onPressed: savePersonalRecord,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
@@ -146,8 +193,8 @@ class _PersonalRecordPageState extends State<PersonalRecordPage> {
     );
   }
 
-  Widget _buildSlider(
-      String label, double value, double min, double max, ValueChanged<double> onChanged) {
+  Widget _buildSlider(String label, double value, double min, double max,
+      ValueChanged<double> onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

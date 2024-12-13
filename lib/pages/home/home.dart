@@ -14,6 +14,7 @@ import '../../theme/theme_provider.dart';
 import 'home_widgets/bottom_navigation_widgets.dart';
 import 'home_widgets/greeting_widget.dart';
 import 'home_widgets/health_metrics.dart';
+import 'home_widgets/social_enagagement_widget.dart';
 import 'home_widgets/today_activities.dart';
 import 'home_widgets/upcoming_activities.dart';
 

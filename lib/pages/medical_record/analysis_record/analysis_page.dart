@@ -1,5 +1,8 @@
+import 'package:elderly_care/pages/medical_record/analysis_record/anaylsis_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For date formatting
+import 'package:intl/intl.dart';
+
+import '../../../models/analysis_record_model.dart';
 
 class AnalysisPage extends StatefulWidget {
   const AnalysisPage({super.key});
@@ -9,6 +12,8 @@ class AnalysisPage extends StatefulWidget {
 }
 
 class _AnalysisPageState extends State<AnalysisPage> {
+  final AnalysisController _controller = AnalysisController();
+
   final TextEditingController uricAcidController = TextEditingController();
   final TextEditingController bloodSugarController = TextEditingController();
   final TextEditingController cholesterolController = TextEditingController();
@@ -34,7 +39,59 @@ class _AnalysisPageState extends State<AnalysisPage> {
   }
 
   void _updateValues() {
-    setState(() {});
+    if (dateController.text.isNotEmpty &&
+        fastingLevelsController.text.isNotEmpty &&
+        ogttController.text.isNotEmpty &&
+        hba1cController.text.isNotEmpty &&
+        uricAcidController.text.isNotEmpty &&
+        bloodSugarController.text.isNotEmpty &&
+        cholesterolController.text.isNotEmpty) {
+      final analysis = MedicalAnalysis(
+        testDate: dateController.text,
+        fastingLevels: fastingLevelsController.text,
+        ogtt: ogttController.text,
+        hba1c: hba1cController.text,
+        uricAcid: uricAcidController.text,
+        bloodSugar: bloodSugarController.text,
+        cholesterol: cholesterolController.text,
+      );
+
+      _controller.addAnalysis(analysis).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Analysis data saved successfully!')),
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save data: $error')),
+        );
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill all fields')),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    _controller.getAnalysis().listen((analysis) {
+      if (analysis != null) {
+        setState(() {
+          dateController.text = analysis.testDate;
+          fastingLevelsController.text = analysis.fastingLevels;
+          ogttController.text = analysis.ogtt;
+          hba1cController.text = analysis.hba1c;
+          uricAcidController.text = analysis.uricAcid;
+          bloodSugarController.text = analysis.bloodSugar;
+          cholesterolController.text = analysis.cholesterol;
+        });
+      }
+    });
   }
 
   void _clearValues() {
@@ -81,7 +138,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
               const SizedBox(height: 10),
               const Text(
                 'Blood Test',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.teal),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal),
               ),
               const SizedBox(height: 10),
               const Text(
@@ -94,7 +154,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
               _buildAnalysisField('GLUCOSE'),
               _buildTextField('Fasting Levels', fastingLevelsController),
               const SizedBox(height: 10),
-              _buildTextField('Oral Glucose Tolerance Test (OGTT)', ogttController),
+              _buildTextField(
+                  'Oral Glucose Tolerance Test (OGTT)', ogttController),
               const SizedBox(height: 10),
               _buildTextField('Hemoglobin A1c (HbA1c)', hba1cController),
               const SizedBox(height: 20),
@@ -149,7 +210,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
       children: [
         Text(
           title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
+          style: const TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
         ),
         const Divider(color: Colors.teal),
       ],
@@ -164,7 +226,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15), // Add padding inside the field
+        contentPadding: const EdgeInsets.symmetric(
+            vertical: 10, horizontal: 15), // Add padding inside the field
       ),
     );
   }
@@ -179,7 +242,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       ),
     );
   }
