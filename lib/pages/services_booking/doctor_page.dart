@@ -2,7 +2,6 @@
 import 'package:elderly_care/pages/services_booking/doctor_service/doctor_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/doctor_model.dart';

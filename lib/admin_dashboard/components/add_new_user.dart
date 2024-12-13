@@ -18,6 +18,10 @@ class _AddUserModalState extends State<AddUserModal> {
   final _ratingsController = TextEditingController();
   final _availabilityController = TextEditingController();
   final _reviewsController = TextEditingController();
+  final _experienceController = TextEditingController();
+  final _skillsController = TextEditingController();
+  final _languagesController = TextEditingController();
+  final _workHoursController = TextEditingController();
 
   String _selectedRole = 'Caregiver';
 
@@ -50,6 +54,15 @@ class _AddUserModalState extends State<AddUserModal> {
           'Ratings': _ratingsController.text,
           'Availability': _availabilityController.text,
           'Reviews': _reviewsController.text,
+        });
+      }
+
+      if (_selectedRole == 'Caregiver') {
+        userData.addAll({
+          'Experience': _experienceController.text,
+          'Skills': _skillsController.text,
+          'Languages': _languagesController.text,
+          'WorkHours': _workHoursController.text,
         });
       }
 
@@ -225,6 +238,68 @@ class _AddUserModalState extends State<AddUserModal> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter reviews';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+                if (_selectedRole == 'Caregiver') ...[
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _experienceController,
+                    decoration: const InputDecoration(
+                      labelText: 'Years of Experience',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter years of experience';
+                      }
+                      if (int.tryParse(value) == null || int.parse(value) < 0) {
+                        return 'Please enter a valid number';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _skillsController,
+                    decoration: const InputDecoration(
+                      labelText: 'Skills (comma-separated)',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter at least one skill';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _languagesController,
+                    decoration: const InputDecoration(
+                      labelText: 'Languages Spoken (comma-separated)',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter at least one language';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _workHoursController,
+                    decoration: const InputDecoration(
+                      labelText: 'Preferred Work Hours',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter preferred work hours';
                       }
                       return null;
                     },

@@ -1,10 +1,46 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/pages/services_booking/caretaker_page.dart';
+import 'package:elderly_care/pages/services_booking/current_booking_card.dart';
 import 'package:elderly_care/pages/services_booking/doctor_page.dart';
 import 'package:elderly_care/pages/services_booking/old_age_home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 
-class Booking extends StatelessWidget {
+import '../../models/doctor_booking_mode.dart';
+
+class Booking extends StatefulWidget {
   const Booking({super.key});
+
+  @override
+  State<Booking> createState() => _BookingState();
+}
+
+class _BookingState extends State<Booking> {
+  late Future<BookingModel> _currentBooking;
+
+  Future<BookingModel> _fetchCurrentBooking() async {
+    String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    // Fetch the current booking for the user from Firestore
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('APPOINTMENTS')
+        .where('userId', isEqualTo: currentUserId) // Filter by userId
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      // Assuming only one booking per user, you can get the first document
+      var doc = snapshot.docs.first;
+      return BookingModel.fromMap(doc.data() as Map<String, dynamic>);
+    } else {
+      throw Exception('Booking not found');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _currentBooking = _fetchCurrentBooking();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +81,8 @@ class Booking extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const DoctorPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const DoctorPage()),
                       );
                     },
                     child: const CategoryCard(
@@ -55,13 +92,13 @@ class Booking extends StatelessWidget {
                       backgroundColor: Colors.green,
                     ),
                   ),
-
                   const SizedBox(width: 10),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CaretakerPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const CaretakerPage()),
                       );
                     },
                     child: const CategoryCard(
@@ -71,13 +108,13 @@ class Booking extends StatelessWidget {
                       backgroundColor: Colors.orange,
                     ),
                   ),
-
                   const SizedBox(width: 10),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const OldAgeHomePage()),
+                        MaterialPageRoute(
+                            builder: (context) => const OldAgeHomePage()),
                       );
                     },
                     child: const CategoryCard(
@@ -90,6 +127,34 @@ class Booking extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(height: 20),
+            // Current Booking
+            const Text(
+              'Current Booking',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            FutureBuilder(
+                future: _currentBooking,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return const Text('No booking found');
+                  } else {
+                    final booking = snapshot.data!;
+                    return CurrentBookingCard(
+                      title: booking.description,
+                      doctorName: booking.doctorName,
+                      date: booking.appointmentDate,
+                      time: booking.appointmentTime,
+                    );
+                  }
+                })
           ],
         ),
       ),

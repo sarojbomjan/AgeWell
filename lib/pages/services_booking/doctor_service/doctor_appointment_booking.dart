@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../controller/doctor_appointment_controller.dart';
@@ -74,15 +75,20 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
 
   // Store appointment in Firestore
   Future<void> _storeAppointment() async {
+    // Get the current user's ID
+    String userId = FirebaseAuth.instance.currentUser!.uid;
     try {
-      await bookAppointment(
-        doctorId: widget.doctorId,
-        patientName: fullNameController.text,
-        patientAge: selectedAge,
-        appointmentDate: selectedDate,
-        appointmentTime: selectedTime,
-        description: descriptionController.text,
-      );
+      // Store the appointment in Firestore
+      await FirebaseFirestore.instance.collection('APPOINTMENTS').add({
+        'doctorId': widget.doctorId,
+        'patientName': fullNameController.text,
+        'patientAge': selectedAge,
+        'appointmentDate': selectedDate,
+        'appointmentTime': selectedTime,
+        'description': descriptionController.text,
+        'userId': userId,
+        'doctorName': doctorName,
+      });
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(

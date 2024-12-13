@@ -23,7 +23,21 @@ class Doctor {
     required this.reviews,
   });
 
-  // Firestore data to Doctor object conversion
+  // Convert Doctor object to a Map<String, dynamic> for Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'FullName': name,
+      'Specialist': specialty,
+      'Email': email,
+      'Phone': phoneNo,
+      'Address': address,
+      'Availability': availability,
+      'Ratings': rating,
+      'Reviews': reviews,
+    };
+  }
+
+  // Convert DocumentSnapshot to Doctor object
   factory Doctor.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
