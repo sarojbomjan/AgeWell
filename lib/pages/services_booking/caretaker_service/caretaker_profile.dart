@@ -106,7 +106,7 @@ class _CaretakerProfileState extends State<CaretakerProfile> {
           }
 
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('Doctor not found.'));
+            return const Center(child: Text('Caretaker not found.'));
           }
           final caregiverDetails = CaregiverModel.fromFirestore(snapshot.data!);
 
