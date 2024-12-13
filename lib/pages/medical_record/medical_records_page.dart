@@ -1,5 +1,8 @@
-import 'package:elderly_care/pages/profile/medical_record/medical_history_form.dart';
-import 'package:elderly_care/pages/profile/medical_record/personal_record_page.dart';
+import 'package:elderly_care/pages/medical_record/allergies_record/allergy_page.dart';
+import 'package:elderly_care/pages/medical_record/analysis_record/analysis_page.dart';
+import 'package:elderly_care/pages/medical_record/medical_history_record/medical_history_page.dart';
+import 'package:elderly_care/pages/medical_record/personal_record_page.dart';
+import 'package:elderly_care/pages/medical_record/vaccination_record/vaccination_page.dart';
 import 'package:flutter/material.dart';
 
 class MedicalRecordsPage extends StatelessWidget {
@@ -80,7 +83,7 @@ class MedicalRecordsPage extends StatelessWidget {
                 mainAxisSpacing: 20,
                 children: [
                   _buildMenuButton('Allergies', Icons.medical_services, context),
-                  _buildMenuButton('Analysys', Icons.analytics, context),
+                  _buildMenuButton('Analysis', Icons.analytics, context),
                   _buildMenuButton('Vaccinations', Icons.vaccines, context),
                   _buildMenuButton('Medical History', Icons.history, context),
                 ],
@@ -120,34 +123,34 @@ class MedicalRecordsPage extends StatelessWidget {
         onTap: () {
           switch (title) {
             case 'Allergies':
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => AllergiesPage(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AllergyPage(),
+                ),
+              );
               break;
-            case 'Analysys':
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => AnalysysPage(),
-              //   ),
-              // );
+            case 'Analysis':
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AnalysisPage(),
+                ),
+              );
               break;
             case 'Vaccinations':
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => VaccinationsPage(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VaccinationPage(),
+                ),
+              );
               break;
             case 'Medical History':
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MedicalHistoryForm(),
+                  builder: (context) => MedicalHistoryPage(),
                 ),
               );
               break;
