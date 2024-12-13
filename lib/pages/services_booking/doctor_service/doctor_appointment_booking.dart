@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../controller/doctor_appointment_controller.dart';
+
 class DoctorAppointmentBooking extends StatefulWidget {
-  const DoctorAppointmentBooking({super.key});
+  final String doctorId;
+  const DoctorAppointmentBooking({super.key, required this.doctorId});
 
   @override
-  State<DoctorAppointmentBooking> createState() => _DoctorAppointmentBookingState();
+  State<DoctorAppointmentBooking> createState() =>
+      _DoctorAppointmentBookingState();
 }
 
 class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
@@ -26,15 +32,14 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
   String selectedDate = "";
   String selectedTime = "12:30 PM";
   final TextEditingController fullNameController =
-  TextEditingController(text: "Your Name");
+      TextEditingController(text: "Your Name");
   String selectedAge = "41 - 50";
   final TextEditingController descriptionController = TextEditingController();
 
   // Doctor data in a Map
-  final Map<String, String> doctorData = {
-    'name': "Dr. Nathalie Fernando",
-    'specialization': "Clinical Psychology",
-  };
+  // Doctor details
+  String doctorName = "";
+  String doctorSpecialization = "";
 
   @override
   void initState() {
@@ -42,6 +47,62 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
     // Initialize the selected date as today's date
     final DateTime now = DateTime.now();
     selectedDate = now.day.toString();
+    _fetchDoctorDetails();
+  }
+
+  // fetch doctor details
+  Future<void> _fetchDoctorDetails() async {
+    try {
+      // Fetch doctor details from Firestore using doctorId
+      final docSnapshot = await FirebaseFirestore.instance
+          .collection('USERS')
+          .doc(widget.doctorId)
+          .get();
+
+      if (docSnapshot.exists) {
+        setState(() {
+          doctorName = docSnapshot['FullName'];
+          doctorSpecialization = docSnapshot['Specialist'];
+        });
+      } else {
+        // Handle if the doctor document is not found
+        print('Doctor not found');
+      }
+    } catch (e) {
+      print('Error fetching doctor details: $e');
+    }
+  }
+
+  // Store appointment in Firestore
+  Future<void> _storeAppointment() async {
+    // Get the current user's ID
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    try {
+      // Store the appointment in Firestore
+      await FirebaseFirestore.instance.collection('APPOINTMENTS').add({
+        'doctorId': widget.doctorId,
+        'patientName': fullNameController.text,
+        'patientAge': selectedAge,
+        'appointmentDate': selectedDate,
+        'appointmentTime': selectedTime,
+        'description': descriptionController.text,
+        'userId': userId,
+        'doctorName': doctorName,
+      });
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Appointment booked successfully!')),
+      );
+
+      // Optionally navigate back after booking
+      Navigator.pop(context);
+    } catch (e) {
+      print('Error storing appointment: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to book appointment')),
+      );
+    }
   }
 
   @override
@@ -57,9 +118,9 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
         backgroundColor: Colors.transparent,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              "Dr. Nathalie Fernando",
+              doctorName.isNotEmpty ? doctorName : "Loading...",
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,
@@ -67,7 +128,9 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
               ),
             ),
             Text(
-              "Clinical Psychology",
+              doctorSpecialization.isNotEmpty
+                  ? doctorSpecialization
+                  : "Loading...",
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 14,
@@ -100,9 +163,11 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: 7,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 12),
                   itemBuilder: (context, index) {
-                    final isSelected = selectedDate == (now.day + index).toString();
+                    final isSelected =
+                        selectedDate == (now.day + index).toString();
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -119,7 +184,8 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              days[(now.weekday - 1 + index) % 7], // Dynamically adjust days
+                              days[(now.weekday - 1 + index) %
+                                  7], // Dynamically adjust days
                               style: TextStyle(
                                 color: isSelected ? Colors.white : Colors.black,
                               ),
@@ -244,7 +310,7 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
                   ),
                   onPressed: () {
-                    // Handle appointment logic
+                    _storeAppointment();
                   },
                   child: const Text(
                     "Set Appointment",
