@@ -185,7 +185,8 @@ class _CaretakerCardState extends State<CaretakerCard> {
                             const Icon(Icons.star,
                                 color: Colors.yellow, size: 16),
                             Text(
-                                '${widget.caretaker.experienceYears} Years (${widget.caretaker.workHours} Reviews)'),
+                                '${widget.caretaker.experienceYears} Years (${widget.caretaker.workHours} Available)',
+                            style: TextStyle(fontSize: 14),),
                           ],
                         ),
                       ],

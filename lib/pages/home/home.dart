@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/home/home_widgets/social_enagagement_widget.dart';
 import 'package:elderly_care/pages/services_booking/booking.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,6 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Health Metrics
                   HealthMetrics(),
+
+                  SocialEngagementWidget(),
                 ],
               ),
             ),
@@ -102,7 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Scaffold(
         appBar: AppBar(
-          title: const Text('ElderCare'),
+          backgroundColor: Colors.green,
+          title: const Text('AgeWell'),
           actions: [
             IconButton(
               onPressed: () {

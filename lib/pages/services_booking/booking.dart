@@ -124,6 +124,22 @@ class _BookingState extends State<Booking> {
                       backgroundColor: Colors.blue,
                     ),
                   ),
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const OldAgeHomePage()),
+                      );
+                    },
+                    child: const CategoryCard(
+                      title: 'Emergency',
+                      subtitle: 'Call',
+                      icon: Icons.bus_alert,
+                      backgroundColor: Colors.red,
+                    ),
+                  ),
                 ],
               ),
             ),

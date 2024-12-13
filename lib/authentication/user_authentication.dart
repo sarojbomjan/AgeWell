@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/authentication/authentication_exception.dart/signup_email_password_failure.dart';
 import 'package:elderly_care/authentication/store_user_details.dart';
+import 'package:elderly_care/caretaker_dashboard/pages/caretaker_dashboard.dart';
 import 'package:elderly_care/models/user_model.dart';
 import 'package:elderly_care/pages/home/home.dart';
 import 'package:elderly_care/screens/welcome_screen.dart';
@@ -55,6 +56,10 @@ class UserAuthentication extends GetxController {
         Get.offAll(
           () => const AdminDashboard(),
         );
+      // } else if (role == 'Caregiver') {
+      //   Get.offAll(
+      //         () => const CaretakerDashboard(), // Assuming you have a CaretakerDashboard screen
+      //   );
       } else {
         Get.offAll(
           () => const HomeScreen(),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'old_age_home_service/booking_details_page.dart';
+import 'booking_details_page.dart';
 
 class CurrentBookingCard extends StatelessWidget {
   final String title;
@@ -82,7 +82,10 @@ class CurrentBookingCard extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('View Details'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: const Text('View Details'),
+              ),
               style: ElevatedButton.styleFrom(
                 shadowColor: Colors.blue,
                 shape: RoundedRectangleBorder(
