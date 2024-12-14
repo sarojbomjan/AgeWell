@@ -129,22 +129,25 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
         'lastCheckedIn': timestamp,
       });
 
-      Get.snackbar(
-        "Check-in Success",
-        "Your location has been updated successfully.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 10),
+              const Text("Your location has been updated successfully."),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Failed to update location. $e",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        icon: const Icon(Icons.error, color: Colors.white),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Failed to update location. Please try again."),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -152,6 +155,9 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          // title: Text("Track you location"),
+          ),
       body: _currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : Column(

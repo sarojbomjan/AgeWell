@@ -33,6 +33,7 @@ class UpdateProfile extends StatelessWidget {
                   controller.email.text = userData.email;
                   controller.phoneNo.text = userData.phoneNo;
                   controller.address.text = userData.address;
+                  controller.emergency.text = userData.emergency ?? '';
                   return Column(
                     children: [
                       Stack(
@@ -103,6 +104,13 @@ class UpdateProfile extends StatelessWidget {
                             labelText: "Address",
                             obscureText: false,
                           ),
+                          const SizedBox(height: 30),
+                          MyTextfield(
+                            controller: controller.emergency,
+                            hintText: 'Emergency Contact',
+                            labelText: "Emergency Contact",
+                            obscureText: false,
+                          ),
 
                           const SizedBox(height: 30),
 
@@ -122,6 +130,7 @@ class UpdateProfile extends StatelessWidget {
                                     email: controller.email.text.trim(),
                                     phoneNo: controller.phoneNo.text.trim(),
                                     address: controller.address.text.trim(),
+                                    emergency: controller.emergency.text.trim(),
                                   );
 
                                   await controller.updateRecord(updatedUser);

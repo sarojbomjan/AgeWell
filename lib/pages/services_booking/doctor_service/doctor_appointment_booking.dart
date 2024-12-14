@@ -79,7 +79,7 @@ class _DoctorAppointmentBookingState extends State<DoctorAppointmentBooking> {
     String userId = FirebaseAuth.instance.currentUser!.uid;
     try {
       // Store the appointment in Firestore
-      await FirebaseFirestore.instance.collection('APPOINTMENTS').add({
+      await FirebaseFirestore.instance.collection('DoctorBooking').add({
         'doctorId': widget.doctorId,
         'patientName': fullNameController.text,
         'patientAge': selectedAge,

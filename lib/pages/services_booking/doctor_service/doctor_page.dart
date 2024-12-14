@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-import '../../models/doctor_model.dart';
+import '../../../models/doctor_model.dart';
 
 class DoctorPage extends StatefulWidget {
   const DoctorPage({Key? key}) : super(key: key);

@@ -8,6 +8,7 @@ class UserModel {
   final String address;
   final String
       role; // This field will store roles like 'customer', 'caretaker', 'doctor'
+  final String? emergency;
 
   // Constructor
   const UserModel({
@@ -17,6 +18,7 @@ class UserModel {
     required this.phoneNo,
     required this.address,
     this.role = 'customer', // Default to 'customer'
+    this.emergency,
   });
 
   // Convert to JSON
@@ -28,6 +30,7 @@ class UserModel {
       "Phone": phoneNo,
       "Address": address,
       "Role": role,
+      "emergencyContact": emergency,
     };
   }
 
@@ -42,6 +45,7 @@ class UserModel {
       phoneNo: json['Phone'],
       address: json['Address'],
       role: json['Role'] ?? 'customer', // Default to 'customer'
+      emergency: json['emergencyContact'] ?? '',
     );
   }
 }

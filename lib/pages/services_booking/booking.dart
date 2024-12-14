@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:elderly_care/pages/services_booking/caretaker_page.dart';
-import 'package:elderly_care/pages/services_booking/current_booking_card.dart';
-import 'package:elderly_care/pages/services_booking/doctor_page.dart';
-import 'package:elderly_care/pages/services_booking/old_age_home_page.dart';
+import 'package:elderly_care/pages/services_booking/caretaker_service/caretaker_page.dart';
+import 'package:elderly_care/pages/services_booking/doctor_service/current_doctor_booking_card.dart';
+import 'package:elderly_care/pages/services_booking/doctor_service/doctor_page.dart';
+import 'package:elderly_care/pages/services_booking/old_age_home_service/old_age_home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../models/caregiver_booking_model.dart';
 import '../../models/doctor_booking_mode.dart';
+import 'caretaker_service/caregiver_booking_card.dart';
 
 class Booking extends StatefulWidget {
   const Booking({super.key});
@@ -17,22 +19,38 @@ class Booking extends StatefulWidget {
 }
 
 class _BookingState extends State<Booking> {
-  late Future<BookingModel> _currentBooking;
+  Future<BookingModel>? _currentBooking;
+  Future<CaregiverBookingModel>? _currentCaregiverBooking;
 
+  // Fetch the current doctor booking for the user
   Future<BookingModel> _fetchCurrentBooking() async {
     String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-    // Fetch the current booking for the user from Firestore
     QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('APPOINTMENTS')
+        .collection('DoctorBooking')
         .where('userId', isEqualTo: currentUserId) // Filter by userId
         .get();
 
     if (snapshot.docs.isNotEmpty) {
-      // Assuming only one booking per user, you can get the first document
       var doc = snapshot.docs.first;
-      return BookingModel.fromMap(doc.data() as Map<String, dynamic>);
+      return BookingModel.fromFirestore(doc);
     } else {
-      throw Exception('Booking not found');
+      throw Exception('Doctor booking not found');
+    }
+  }
+
+  // Fetch the current caregiver booking for the user
+  Future<CaregiverBookingModel> _fetchCaregiverBooking() async {
+    String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('CaregiverBooking')
+        .where('userID', isEqualTo: currentUserId)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      var doc = snapshot.docs.first;
+      return CaregiverBookingModel.fromFirestore(doc);
+    } else {
+      throw Exception('Caregiver booking not found');
     }
   }
 
@@ -40,6 +58,14 @@ class _BookingState extends State<Booking> {
   void initState() {
     super.initState();
     _currentBooking = _fetchCurrentBooking();
+    _currentCaregiverBooking = _fetchCaregiverBooking();
+  }
+
+  void _refreshBookings() {
+    setState(() {
+      _currentBooking = _fetchCurrentBooking();
+      _currentCaregiverBooking = _fetchCaregiverBooking();
+    });
   }
 
   @override
@@ -82,8 +108,12 @@ class _BookingState extends State<Booking> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const DoctorPage()),
-                      );
+                          builder: (context) => const DoctorPage(),
+                        ),
+                      ).then((_) {
+                        // Refresh data when coming back to Booking page
+                        _refreshBookings();
+                      });
                     },
                     child: const CategoryCard(
                       title: 'Doctor',
@@ -98,13 +128,16 @@ class _BookingState extends State<Booking> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CaretakerPage()),
-                      );
+                          builder: (context) => const CaretakerPage(),
+                        ),
+                      ).then((_) {
+                        _refreshBookings();
+                      });
                     },
                     child: const CategoryCard(
                       title: 'Caretaker',
                       subtitle: 'Hire',
-                      icon: Icons.handyman,
+                      icon: Icons.person,
                       backgroundColor: Colors.orange,
                     ),
                   ),
@@ -145,14 +178,13 @@ class _BookingState extends State<Booking> {
             ),
 
             const SizedBox(height: 20),
-            // Current Booking
+            // Current Booking - Doctor Booking
             const Text(
-              'Current Booking',
+              'Current Doctor Booking',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-
-            FutureBuilder(
+            FutureBuilder<BookingModel>(
                 future: _currentBooking,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -160,7 +192,7 @@ class _BookingState extends State<Booking> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData) {
-                    return const Text('No booking found');
+                    return const Text('No doctor booking found');
                   } else {
                     final booking = snapshot.data!;
                     return CurrentBookingCard(
@@ -168,9 +200,42 @@ class _BookingState extends State<Booking> {
                       doctorName: booking.doctorName,
                       date: booking.appointmentDate,
                       time: booking.appointmentTime,
+                      bookingType: 'doctor',
+                      bookingID: booking.bookingID,
                     );
                   }
-                })
+                }),
+
+            const SizedBox(height: 20),
+
+            // Current Caregiver Booking
+            const Text(
+              'Current Caregiver Booking',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            FutureBuilder<CaregiverBookingModel>(
+                future: _currentCaregiverBooking,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return const Text('No caregiver booking found');
+                  } else {
+                    final caregiverBooking = snapshot.data!;
+                    return CaregiverBookingCard(
+                      caregiverName: caregiverBooking.caregiverName,
+                      startDate: caregiverBooking.startDate,
+                      startTime: caregiverBooking.startTime,
+                      endDate: caregiverBooking.endDate,
+                      endTime: caregiverBooking.endTime,
+                      location: caregiverBooking.location,
+                      bookingID: caregiverBooking.bookingID,
+                    );
+                  }
+                }),
           ],
         ),
       ),
