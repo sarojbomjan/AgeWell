@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
-import 'old_age_home_service/booking_details_page.dart';
+import 'package:intl/intl.dart';
+import '../booking_details_page.dart';
 
-class CurrentBookingCard extends StatelessWidget {
-  final String title;
-  final String doctorName;
-  final String date;
-  final String time;
+class CaregiverBookingCard extends StatelessWidget {
+  final String caregiverName;
+  final DateTime startDate;
+  final String startTime;
+  final DateTime endDate;
+  final String endTime;
+  final String location;
+  final String bookingID;
 
-  const CurrentBookingCard({
-    required this.title,
-    required this.doctorName,
-    required this.date,
-    required this.time,
+  const CaregiverBookingCard({
+    required this.caregiverName,
+    required this.startDate,
+    required this.startTime,
+    required this.endDate,
+    required this.endTime,
+    required this.location,
+    required this.bookingID,
   });
+
+  String _formatDate(DateTime date) {
+    return DateFormat('d MMM, yyyy')
+        .format(date); // Format date as '14 Dec, 2024'
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,58 +38,62 @@ class CurrentBookingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Caregiver name
             Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
+              "Booking information",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Row(
-              children: [
-                const Icon(Icons.person, color: Colors.grey),
-                const SizedBox(width: 8),
-                Text(
-                  doctorName,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5),
+
+            // Start and End Date
             Row(
               children: [
                 const Icon(Icons.calendar_today, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
-                  date,
+                  ' ${_formatDate(startDate)}to ${_formatDate(endDate)}',
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
             const SizedBox(height: 5),
+
+            // Start and End Time
             Row(
               children: [
                 const Icon(Icons.access_time, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
-                  time,
+                  '$startTime to $endTime',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+            const SizedBox(height: 5),
+
+            // Location
+            Row(
+              children: [
+                const Icon(Icons.location_on, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  location,
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
             const SizedBox(height: 10),
+
+            // View Details Button
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => BookingDetailsPage(
-                      title: title,
-                      doctorName: doctorName,
-                      date: date,
-                      time: time,
+                      bookingID:
+                          bookingID, // Pass the unique booking ID from Firestore here
+                      bookingType: 'caregiver',
                     ),
                   ),
                 );

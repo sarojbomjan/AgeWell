@@ -16,6 +16,7 @@ class ProfileController extends GetxController {
   final fullname = TextEditingController();
   final phoneNo = TextEditingController();
   final address = TextEditingController();
+  TextEditingController emergency = TextEditingController();
 
   final _userAuth = Get.put(UserAuthentication());
   final _storeUser = Get.put(StoreUser());

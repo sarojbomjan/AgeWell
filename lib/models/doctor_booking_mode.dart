@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class BookingModel {
+  final String bookingID;
   final String appointmentDate;
   final String appointmentTime;
   final String description;
@@ -9,7 +12,8 @@ class BookingModel {
   final String doctorName;
 
   BookingModel(
-      {required this.appointmentDate,
+      {this.bookingID = "",
+      required this.appointmentDate,
       required this.appointmentTime,
       required this.description,
       required this.doctorId,
@@ -33,8 +37,10 @@ class BookingModel {
   }
 
   // Convert Map<String, dynamic> to BookingModel object
-  factory BookingModel.fromMap(Map<String, dynamic> data) {
+  factory BookingModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return BookingModel(
+      bookingID: doc.id,
       appointmentDate: data['appointmentDate'] ?? '',
       appointmentTime: data['appointmentTime'] ?? '',
       description: data['description'] ?? '',

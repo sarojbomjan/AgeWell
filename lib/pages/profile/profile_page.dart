@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/googlemap/location_sharing.dart';
 import 'package:elderly_care/pages/privacy_and_policies/privacy_and_policies.dart';
 import 'package:elderly_care/pages/settings/settings_page.dart';
 import 'package:elderly_care/pages/medical_record/medical_records_page.dart';
@@ -130,9 +131,11 @@ class ProfilePage extends StatelessWidget {
             },
           ),
           ProfileMenuWidget(
-            title: "User Management",
-            icon: LineAwesomeIcons.user_check_solid,
-            onPress: () {},
+            title: "Track Location",
+            icon: LineAwesomeIcons.location_arrow_solid,
+            onPress: () {
+              Get.to(() => const LocationSharingScreen());
+            },
           ),
           ProfileMenuWidget(
             title: "Medical Records",

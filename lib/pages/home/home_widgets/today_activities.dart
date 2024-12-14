@@ -1,6 +1,8 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/pages/home/home_widgets/activity.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../home_functionalities/add_activity.dart';
 
 class TodayActivities extends StatelessWidget {
@@ -8,6 +10,52 @@ class TodayActivities extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> scheduleActivityReminder(
+        String activityId, String activityTime) async {
+      final format = DateFormat("h:mm a");
+      DateTime activityDateTime = format.parse(activityTime);
+
+      // Get today's date to combine with the activity time
+      final now = DateTime.now();
+      final todayDate = DateTime(now.year, now.month, now.day);
+      activityDateTime = todayDate.add(Duration(
+          hours: activityDateTime.hour, minutes: activityDateTime.minute));
+
+      // Calculate the time difference
+      final timeDifference = activityDateTime.difference(now);
+
+      // Check if the activity is within 10 minutes of starting
+      if (timeDifference.inMinutes <= 10 && timeDifference.inMinutes >= 0) {
+        // Fetch the activity title from Firestore
+        DocumentSnapshot activityDoc = await FirebaseFirestore.instance
+            .collection('ACTIVITIES')
+            .doc(activityId) // Using activityId to get the specific activity
+            .get();
+
+        if (activityDoc.exists) {
+          String activityTitle = activityDoc['name'];
+
+          // Create the NotificationContent with the activity title
+          NotificationContent notificationContent = NotificationContent(
+            id: activityId.hashCode, // Unique ID for the notification
+            channelKey: 'basic_channel',
+            title: 'Activity Reminder',
+            body: 'Your activity "$activityTitle" is about to start!',
+            notificationLayout: NotificationLayout.Default,
+          );
+
+          // Create the notification with the content
+          await AwesomeNotifications().createNotification(
+            content: notificationContent,
+          );
+        } else {
+          print("Activity not found in Firestore.");
+        }
+      } else {
+        print("Activity is not within 10 minutes.");
+      }
+    }
+
     final brightness = Theme.of(context).brightness;
 
     return Column(
@@ -50,10 +98,9 @@ class TodayActivities extends StatelessWidget {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
+
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return Center(
                 child: Text(
@@ -69,8 +116,16 @@ class TodayActivities extends StatelessWidget {
 
             final activities = snapshot.data!.docs;
 
+            // Schedule notifications for activities near their time
+            for (var activity in activities) {
+              final activityTime = activity['time'];
+              if (activityTime != null) {
+                scheduleActivityReminder(activity.id, activityTime);
+              }
+            }
+
             return ListView.builder(
-              shrinkWrap: true, // Make ListView take up only required space
+              shrinkWrap: true,
               itemCount: activities.length,
               itemBuilder: (context, index) {
                 final activity = activities[index];
@@ -88,7 +143,7 @@ class TodayActivities extends StatelessWidget {
               },
             );
           },
-        ),
+        )
       ],
     );
   }

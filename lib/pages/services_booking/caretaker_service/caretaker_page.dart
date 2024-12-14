@@ -3,7 +3,7 @@ import 'package:elderly_care/pages/services_booking/caretaker_service/caretaker_
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../models/caregiver_model.dart';
+import '../../../models/caregiver_model.dart';
 
 class CaretakerPage extends StatefulWidget {
   const CaretakerPage({super.key});

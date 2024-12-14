@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 import '../../theme/theme.dart';
 import '../../theme/theme_provider.dart';
 import 'home_widgets/bottom_navigation_widgets.dart';
+import 'home_widgets/emergency_contact.dart';
 import 'home_widgets/greeting_widget.dart';
 import 'home_widgets/health_metrics.dart';
 import 'home_widgets/social_enagagement_widget.dart';
@@ -33,27 +34,46 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // Emergency contact number (You can fetch this from user settings or Firestore)
-  final String emergencyContact = '1234567890';
-
+  String emergencyContact = "";
   Future<void> _onSOSButtonPressed() async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: emergencyContact);
-    try {
-      if (await canLaunchUrl(phoneUri)) {
-        await launchUrl(phoneUri);
-      } else {
-        Get.snackbar(
-          'Error',
-          'Could not launch phone dialer.',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to open phone dialer.',
-        snackPosition: SnackPosition.BOTTOM,
+    if (emergencyContact.isEmpty) {
+      // Show the emergency contact dialog if the contact is not saved
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return EmergencyContactDialog(
+            onContactSaved: (String contact) {
+              setState(() {
+                emergencyContact = contact; // Update local state
+              });
+            },
+          );
+        },
       );
+    } else {
+      // Ensure the contact is valid before attempting to launch the dialer
+      final Uri phoneUri = Uri(scheme: 'tel', path: emergencyContact);
+      try {
+        if (await canLaunchUrl(phoneUri)) {
+          await launchUrl(
+              phoneUri); // Launch phone dialer with the saved contact
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Could not launch phone dialer."),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Failed to open phone dialer."),
+            backgroundColor: Colors.red,
+          ),
+        );
+        debugPrint("Error launching phone dialer: $e");
+      }
     }
   }
 

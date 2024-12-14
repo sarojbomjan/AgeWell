@@ -23,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: ListView(
         children: [
-          _buildProfileSection(),
+          // _buildProfileSection(),
           _buildSettingsSection(),
           _buildLanguageSection(),
           _buildEmergencyContactsSection(),
