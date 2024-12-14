@@ -1,17 +1,20 @@
+import 'package:elderly_care/pages/services_booking/booking_details_page.dart';
 import 'package:flutter/material.dart';
-import 'booking_details_page.dart';
 
 class CurrentBookingCard extends StatelessWidget {
   final String title;
   final String doctorName;
   final String date;
   final String time;
+  final bookingID;
 
   const CurrentBookingCard({
     required this.title,
     required this.doctorName,
     required this.date,
     required this.time,
+    required this.bookingID,
+    required String bookingType,
   });
 
   @override
@@ -74,10 +77,8 @@ class CurrentBookingCard extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BookingDetailsPage(
-                      title: title,
-                      doctorName: doctorName,
-                      date: date,
-                      time: time,
+                      bookingID: bookingID,
+                      bookingType: 'doctor',
                     ),
                   ),
                 );

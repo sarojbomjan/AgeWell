@@ -10,7 +10,6 @@ class CaregiverBookingCard extends StatelessWidget {
   final String endTime;
   final String location;
   final String bookingID;
-
   const CaregiverBookingCard({
     required this.caregiverName,
     required this.startDate,
@@ -20,7 +19,6 @@ class CaregiverBookingCard extends StatelessWidget {
     required this.location,
     required this.bookingID,
   });
-
   String _formatDate(DateTime date) {
     return DateFormat('d MMM, yyyy')
         .format(date); // Format date as '14 Dec, 2024'
@@ -44,7 +42,6 @@ class CaregiverBookingCard extends StatelessWidget {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-
             // Start and End Date
             Row(
               children: [
@@ -57,7 +54,6 @@ class CaregiverBookingCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 5),
-
             // Start and End Time
             Row(
               children: [
@@ -70,7 +66,6 @@ class CaregiverBookingCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 5),
-
             // Location
             Row(
               children: [
@@ -83,7 +78,6 @@ class CaregiverBookingCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-
             // View Details Button
             ElevatedButton(
               onPressed: () {

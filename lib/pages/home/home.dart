@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/home/home_widgets/emergency_contact.dart';
 import 'package:elderly_care/pages/home/home_widgets/social_enagagement_widget.dart';
 import 'package:elderly_care/pages/services_booking/booking.dart';
 import 'package:flutter/material.dart';
@@ -33,11 +34,63 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // Emergency contact number (You can fetch this from user settings or Firestore)
-  final String emergencyContact = '1234567890';
+  String emergencyContact = "";
+
+  // Future<void> _onSOSButtonPressed() async {
+  //   if (emergencyContact.isEmpty) {
+  //     // If no emergency contact is set, show the dialog
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => EmergencyContactDialog(
+  //         onContactSaved: (contact) {
+  //           setState(() {
+  //             // Update emergency contact when saved
+  //             emergencyContact = contact;
+  //           });
+
+  //           // Automatically dial the emergency contact after saving it
+  //           _launchDialer(
+  //               emergencyContact); // Call helper method to launch dialer
+  //         },
+  //       ),
+  //     );
+  //   } else {
+  //     // If emergency contact is set, directly launch the dialer
+  //     _launchDialer(emergencyContact);
+  //   }
+  // }
 
   Future<void> _onSOSButtonPressed() async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: emergencyContact);
+    if (emergencyContact.isEmpty) {
+      // If no emergency contact is set, show the dialog
+      showDialog(
+        context: context,
+        builder: (context) => EmergencyContactDialog(
+          onContactSaved: (contact) {
+            setState(() {
+              // Update emergency contact when saved
+              emergencyContact = contact;
+            });
+
+            // Show success message after saving contact
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Emergency contact saved successfully.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
+        ),
+      );
+    } else {
+      // If emergency contact is set, launch the dialer
+      _launchDialer(emergencyContact);
+    }
+  }
+
+// Helper method to launch the dialer
+  Future<void> _launchDialer(String contact) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: contact);
     try {
       if (await canLaunchUrl(phoneUri)) {
         await launchUrl(phoneUri);
@@ -109,7 +162,13 @@ class _HomeScreenState extends State<HomeScreen> {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.green,
-          title: const Text('AgeWell'),
+          title: Row(
+            children: [
+              Image.asset("lib/images/age_well_logo.png",
+                  height: 120, width: 70),
+              const Text('AgeWell'),
+            ],
+          ),
           actions: [
             IconButton(
               onPressed: () {

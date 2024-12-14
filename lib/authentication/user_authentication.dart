@@ -55,10 +55,10 @@ class UserAuthentication extends GetxController {
         Get.offAll(
           () => const AdminDashboard(),
         );
-      // } else if (role == 'Caregiver') {
-      //   Get.offAll(
-      //         () => const CaretakerDashboard(), // Assuming you have a CaretakerDashboard screen
-      //   );
+      } else if (role == 'Caregiver') {
+        Get.offAll(
+          () => const CaretakerDashboard(),
+        );
       } else {
         Get.offAll(
           () => const HomeScreen(),

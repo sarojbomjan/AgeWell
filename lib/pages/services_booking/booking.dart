@@ -61,13 +61,6 @@ class _BookingState extends State<Booking> {
     _currentCaregiverBooking = _fetchCaregiverBooking();
   }
 
-  void _refreshBookings() {
-    setState(() {
-      _currentBooking = _fetchCurrentBooking();
-      _currentCaregiverBooking = _fetchCaregiverBooking();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,12 +101,8 @@ class _BookingState extends State<Booking> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const DoctorPage(),
-                        ),
-                      ).then((_) {
-                        // Refresh data when coming back to Booking page
-                        _refreshBookings();
-                      });
+                            builder: (context) => const DoctorPage()),
+                      );
                     },
                     child: const CategoryCard(
                       title: 'Doctor',
@@ -128,11 +117,8 @@ class _BookingState extends State<Booking> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CaretakerPage(),
-                        ),
-                      ).then((_) {
-                        _refreshBookings();
-                      });
+                            builder: (context) => const CaretakerPage()),
+                      );
                     },
                     child: const CategoryCard(
                       title: 'Caretaker',
@@ -155,22 +141,6 @@ class _BookingState extends State<Booking> {
                       subtitle: 'Join',
                       icon: Icons.home,
                       backgroundColor: Colors.blue,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const OldAgeHomePage()),
-                      );
-                    },
-                    child: const CategoryCard(
-                      title: 'Emergency',
-                      subtitle: 'Call',
-                      icon: Icons.bus_alert,
-                      backgroundColor: Colors.red,
                     ),
                   ),
                 ],

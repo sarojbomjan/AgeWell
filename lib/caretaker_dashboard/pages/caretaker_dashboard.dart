@@ -84,12 +84,12 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
   }
 
   Widget _buildInfoCard(
-      BuildContext context,
-      IconData icon,
-      String title,
-      String subtitle,
-      Widget page,
-      ) {
+    BuildContext context,
+    IconData icon,
+    String title,
+    String subtitle,
+    Widget page,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -99,7 +99,8 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.lightBlueAccent.withOpacity(0.1), // Set background color inside
+          color: Colors.lightBlueAccent
+              .withOpacity(0.1), // Set background color inside
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Card(
@@ -138,12 +139,12 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
   }
 
   Widget _buildDetailCard(
-      BuildContext context,
-      IconData icon,
-      String title,
-      String content,
-      String route,
-      ) {
+    BuildContext context,
+    IconData icon,
+    String title,
+    String content,
+    String route,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, route);
@@ -154,7 +155,8 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
         ),
         child: ListTile(
           leading: Icon(icon, size: 40, color: Colors.blue), // Icon color
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          title:
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(content),
         ),
       ),

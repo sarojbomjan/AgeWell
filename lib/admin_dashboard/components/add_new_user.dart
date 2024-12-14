@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -40,44 +41,87 @@ class _AddUserModalState extends State<AddUserModal> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final userData = {
-        'FullName': _nameController.text,
-        'Email': _emailController.text,
-        'Address': _addressController.text,
-        'Phone': _phoneController.text,
-        'Role': _selectedRole,
-      };
-
-      if (_selectedRole == 'Doctor') {
-        userData.addAll({
-          'Specialist': _specialistController.text,
-          'Ratings': _ratingsController.text,
-          'Availability': _availabilityController.text,
-          'Reviews': _reviewsController.text,
-        });
-      }
-
-      if (_selectedRole == 'Caregiver') {
-        userData.addAll({
-          'Experience': _experienceController.text,
-          'Skills': _skillsController.text,
-          'Languages': _languagesController.text,
-          'WorkHours': _workHoursController.text,
-        });
-      }
-
       try {
-        await FirebaseFirestore.instance.collection('USERS').add(userData);
+        // Get the current authenticated user (admin)
+        User? currentUser = FirebaseAuth.instance.currentUser;
+
+        // Save the admin's current credentials to restore session later
+        final String adminEmail = currentUser!.email!;
+        final String? adminPassword =
+            await _getAdminPassword(); // Retrieve admin password securely
+
+        // Create the new user in Firebase Authentication
+        UserCredential newUserCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: '12345678', // Set a default password for the new user
+        );
+
+        // Get the UID of the new user
+        String newUserId = newUserCredential.user!.uid;
+
+        // Create the user data to store in Firestore
+        final userData = {
+          'FullName': _nameController.text,
+          'Email': _emailController.text,
+          'Address': _addressController.text,
+          'Phone': _phoneController.text,
+          'Role': _selectedRole,
+          'AuthUID':
+              newUserId, // Link the Firestore document to the Authentication UID
+        };
+
+        // Add role-specific data for Doctor or Caregiver
+        if (_selectedRole == 'Doctor') {
+          userData.addAll({
+            'Specialist': _specialistController.text,
+            'Ratings': _ratingsController.text,
+            'Availability': _availabilityController.text,
+            'Reviews': _reviewsController.text,
+          });
+        }
+
+        if (_selectedRole == 'Caregiver') {
+          userData.addAll({
+            'Experience': _experienceController.text,
+            'Skills': _skillsController.text,
+            'Languages': _languagesController.text,
+            'WorkHours': _workHoursController.text,
+          });
+        }
+
+        // Store the user data in Firestore with the UID as the document ID
+        await FirebaseFirestore.instance
+            .collection('USERS')
+            .doc(newUserId)
+            .set(userData);
+
+        // Log the admin back in to restore their session
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: adminEmail,
+          password: adminPassword!,
+        );
+
+        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User added successfully!')),
         );
-        Navigator.of(context).pop();
+
+        // Optionally, navigate back to the dashboard without logging out
+        //Navigator.of(context).pop();
       } catch (error) {
+        // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to add user. Try again.')),
         );
       }
     }
+  }
+
+  Future<String?> _getAdminPassword() async {
+    // Implement a secure way to retrieve the admin's password.
+    // For example, you can use Secure Storage to store and retrieve the admin's password securely.
+    return '12345678'; // Replace with actual implementation
   }
 
   @override
