@@ -1,4 +1,6 @@
+import 'package:elderly_care/caretaker_dashboard/pages/next_appointment.dart';
 import 'package:elderly_care/caretaker_dashboard/widgets/bottom_nav_bar.dart';
+import 'package:elderly_care/pages/health/health.dart';
 import 'package:flutter/material.dart';
 
 class CaretakerDashboard extends StatefulWidget {
@@ -35,7 +37,7 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
                     Icons.calendar_today,
                     'Next Appointment',
                     '10:00 AM',
-                    '/nextAppointment',
+                    NextAppointment(), // Navigate to Appointment page
                   ),
                 ),
                 const SizedBox(width: 16.0),
@@ -45,7 +47,7 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
                     Icons.favorite,
                     'Health Status',
                     'Stable',
-                    '/healthStatus',
+                    Health(), // Navigate to Health page
                   ),
                 ),
               ],
@@ -86,11 +88,14 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
       IconData icon,
       String title,
       String subtitle,
-      String route,
+      Widget page,
       ) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, route);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -148,7 +153,7 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: ListTile(
-          leading: Icon(icon, size: 40),
+          leading: Icon(icon, size: 40, color: Colors.blue), // Icon color
           title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(content),
         ),
