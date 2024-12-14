@@ -16,7 +16,7 @@ class UserAuthentication extends GetxController {
 
   final _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  //late final Rx<User?> firebaseUser;
+
   Rx<User?> firebaseUser = Rx<User?>(null);
   var verificationId = ''.obs;
 
@@ -27,8 +27,7 @@ class UserAuthentication extends GetxController {
 
     // Initialize firebaseUser to track user changes
     firebaseUser = Rx<User?>(_auth.currentUser);
-    firebaseUser
-        .bindStream(_auth.userChanges()); // Stream for user state changes
+    firebaseUser.bindStream(_auth.userChanges());
 
     ever(firebaseUser, _setInitialScreen);
   }
@@ -221,12 +220,10 @@ class UserAuthentication extends GetxController {
     } on FirebaseAuthException catch (e) {
       final ex = LoginWithEmailAndPasswordFailure.code(e.code);
 
-      // Get.snackbar("Login Error", ex.message,
-      //     snackPosition: SnackPosition.BOTTOM);
       throw ex;
     } catch (_) {
       const ex = LoginWithEmailAndPasswordFailure();
-      // print("EXCEPTION - ${ex.message}");
+
       throw ex;
     }
   }

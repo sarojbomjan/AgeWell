@@ -87,6 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Health Metrics
                   HealthMetrics(),
 
+                  SizedBox(height: 24),
+
+                  // Social Engagement
                   SocialEngagementWidget(),
                 ],
               ),

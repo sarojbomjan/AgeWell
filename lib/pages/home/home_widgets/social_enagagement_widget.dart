@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/community/video_features/video.dart';
 import 'package:flutter/material.dart';
 
 class SocialEngagementWidget extends StatelessWidget {
@@ -21,7 +22,8 @@ class SocialEngagementWidget extends StatelessWidget {
               title: const Text('Join Community Group'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                // TODO: Implement community group navigation
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Video()));
               },
             ),
             ListTile(

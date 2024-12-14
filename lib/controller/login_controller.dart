@@ -15,39 +15,6 @@ class LoginController extends GetxController {
   final isGoogleLoading = false.obs;
   final isFacebookLoading = false.obs;
 
-  // sign user in method
-  // Future<void> signUserIn(
-  //     String email, String password, BuildContext context) async {
-  //   try {
-  //     // Start loading
-  //     isLoading.value = true;
-
-  //     // Sign in using Firebase
-  //     await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-  //     // If successful, navigate to HomePage
-  //     Get.offAll(() => const HomeScreen());
-  //   } on FirebaseAuthException catch (e) {
-  //     final ex = LoginWithEmailAndPasswordFailure.code(e.code);
-
-  //     // Show the appropriate error message
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(ex.message)),
-  //     );
-  //   } catch (e) {
-  //     // If an unknown error occurs
-  //     const ex = LoginWithEmailAndPasswordFailure();
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(ex.message)),
-  //     );
-  //   } finally {
-  //     // End loading
-  //     isLoading.value = false;
-  //   }
-  // }
-
   Future<void> signUserIn(
       String email, String password, BuildContext context) async {
     try {
@@ -79,13 +46,19 @@ class LoginController extends GetxController {
 
       // Show the appropriate error message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(ex.message)),
+        SnackBar(
+          content: Text(ex.message),
+          backgroundColor: Colors.red,
+        ),
       );
     } catch (e) {
       // If an unknown error occurs
       const ex = LoginWithEmailAndPasswordFailure();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(ex.message)),
+        SnackBar(
+          content: Text(ex.message),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       // End loading

@@ -17,6 +17,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  bool isLoading = false;
+
   final controller = Get.put(SignUpController());
   final _formKey = GlobalKey<FormState>();
 
@@ -192,42 +194,50 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 30),
 
                 // Sign Up button
-                MyButton(
-                  text: "Sign Up",
-                  onTap: () async {
-                    if (_formKey.currentState!.validate()) {
-                      try {
-                        // Register user with email and password
-                        await controller.registerUser();
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return MyButton(
+                      text: "Sign Up",
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          try {
+                            // Register user with email and password
+                            await controller.registerUser();
 
-                        // Clear text fields after successful registration
-                        controller.fullName.clear();
-                        controller.email.clear();
-                        controller.phoneNo.clear();
-                        controller.address.clear();
-                        controller.password.clear();
+                            // Clear text fields after successful registration
+                            controller.fullName.clear();
+                            controller.email.clear();
+                            controller.phoneNo.clear();
+                            controller.address.clear();
+                            controller.password.clear();
 
-                        // Show success message or navigate
-                        Get.snackbar(
-                          "Success",
-                          "Account created successfully!",
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white,
-                        );
-                      } catch (e) {
-                        // Handle errors (e.g., Firebase or validation errors)
-                        Get.snackbar(
-                          "Error",
-                          e.toString(),
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                      }
-                    }
-                  },
-                ),
+                            // Show success message or navigate
+                            Get.snackbar(
+                              "Success",
+                              "Account created successfully!",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                            );
+                          } catch (e) {
+                            // Handle errors (e.g., Firebase or validation errors)
+                            Get.snackbar(
+                              "Error",
+                              e.toString(),
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          }
+                        }
+                      },
+                    );
+                  }
+                }),
 
                 const SizedBox(height: 40),
 

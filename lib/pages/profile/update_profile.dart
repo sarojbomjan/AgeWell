@@ -128,6 +128,13 @@ class UpdateProfile extends StatelessWidget {
 
                                   // Refetch user data to update UI
                                   await controller.getUserData();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('Profile updated successfully'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
                                 } else {
                                   // If user data is not found, it will be handled in the controller already
                                 }
@@ -146,36 +153,24 @@ class UpdateProfile extends StatelessWidget {
                           const SizedBox(
                             height: 40,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text.rich(TextSpan(
-                                  text: "Joined ",
-                                  style: TextStyle(fontSize: 12),
-                                  children: [
-                                    TextSpan(
-                                        text: "1 December 2024",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12))
-                                  ])),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Show the delete confirmation dialog
-                                  showDeleteConfirmationDialog(
-                                      context, controller);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Colors.redAccent.withOpacity(0.1),
-                                  foregroundColor: Colors.red,
-                                  shape: const StadiumBorder(),
-                                  side: BorderSide.none,
-                                  elevation: 0,
-                                ),
-                                child: const Text("Delete"),
-                              )
-                            ],
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Show the delete confirmation dialog
+                                showDeleteConfirmationDialog(
+                                    context, controller);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.redAccent.withOpacity(0.1),
+                                foregroundColor: Colors.red,
+                                shape: const StadiumBorder(),
+                                side: BorderSide.none,
+                                elevation: 0,
+                              ),
+                              child: const Text("Delete"),
+                            ),
                           )
                         ],
                       ))

@@ -12,8 +12,12 @@ class SignUpController extends GetxController {
   final phoneNo = TextEditingController();
   final address = TextEditingController();
 
+  final isLoading = false.obs;
+
   // register user function
   Future<void> registerUser() async {
+    isLoading.value = true;
+
     await UserAuthentication.instance.createUserWithEmailAndPassword(
       email.text.trim(),
       password.text.trim(),

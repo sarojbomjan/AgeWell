@@ -8,13 +8,14 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-            color: theme.primaryColor, borderRadius: BorderRadius.circular(12)),
+            color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+            borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
         padding: const EdgeInsets.all(20),
         child: Row(
