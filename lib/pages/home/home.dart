@@ -108,7 +108,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Scaffold(
         appBar: AppBar(
-          title: const Text('ElderCare'),
+          title: Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Row(
+              children: [
+                Image.asset(
+                  'lib/images/age_well_logo.png',
+                  width: 70,
+                  height: 120,
+                ),
+                const SizedBox(
+                  width: 12,
+                ),
+                const Text('ElderCare'),
+              ],
+            ),
+          ),
           actions: [
             IconButton(
               onPressed: () {
