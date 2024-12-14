@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/authentication/store_user_details.dart';
 import 'package:elderly_care/controller/personal_record_controller.dart';
 import 'package:elderly_care/models/user_model.dart';
+import 'package:elderly_care/pages/medical_record/allergies_record/edit_allergy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import the intl package
+
+import '../../../models/allergy_model.dart';
+import 'add_allergy_dialog.dart';
 
 class AllergyPage extends StatefulWidget {
   const AllergyPage({super.key});
@@ -15,30 +19,7 @@ class AllergyPage extends StatefulWidget {
 class _AllergyPageState extends State<AllergyPage> {
   final StoreUser _auth = StoreUser();
 
-  final List<Map<String, String>> allergies = [
-    {
-      'name': 'Insulin',
-      'symptoms':
-          'Skin Symptoms: redness, itching and swelling at injection site.',
-      'date': '10 February 20XX',
-    },
-    {
-      'name': 'Codeine',
-      'symptoms': 'Respiratory Symptoms: Wheezing, difficulty breathing.',
-      'date': '06 June 20XX',
-    },
-    {
-      'name': 'Pollen',
-      'symptoms':
-          'Respiratory Symptoms: Sneezing, runny nose, nasal congestion.',
-      'date': '20 October 20XX',
-    },
-    {
-      'name': 'Latex',
-      'symptoms': 'Skin Symptoms: Itching, redness, rash.',
-      'date': '20 October 20XX',
-    },
-  ];
+  List<Allergy> allergies = []; // Use a list of Allergy objects instead of maps
 
   final TextEditingController _allergyNameController = TextEditingController();
   final TextEditingController _symptomsController = TextEditingController();
@@ -72,7 +53,45 @@ class _AllergyPageState extends State<AllergyPage> {
   void initState() {
     super.initState();
     _fetchUserDetails();
-    _fetchPersonalRecord(); // Fetch user details on page load
+    _fetchPersonalRecord();
+    _fetchAllergies(); // Fetch user details on page load
+  }
+
+  // Fetch allergies from Firestore
+  void _fetchAllergies() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Fetch allergies from Firestore
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      var snapshot = await FirebaseFirestore.instance
+          .collection('ALLERGIES')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      // Map the data to Allergy model and update the list
+      List<Allergy> fetchedAllergies = snapshot.docs.map((doc) {
+        return Allergy(
+          id: doc.id,
+          name: doc['name'],
+          symptoms: doc['symptoms'],
+          date: doc['date'],
+          userId: doc['userId'],
+        );
+      }).toList();
+
+      setState(() {
+        allergies = fetchedAllergies;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching allergies: $e");
+    }
   }
 
   // Fetching the personal record
@@ -91,98 +110,76 @@ class _AllergyPageState extends State<AllergyPage> {
   void _showAddAllergyDialog() {
     _allergyNameController.clear();
     _symptomsController.clear();
+    final String? userId = FirebaseAuth.instance.currentUser?.uid;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add Allergy'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _allergyNameController,
-                decoration: const InputDecoration(labelText: 'Allergy Name'),
-              ),
-              TextField(
-                controller: _symptomsController,
-                decoration: const InputDecoration(labelText: 'Symptoms'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Get the current date in the desired format
-                String formattedDate =
-                    DateFormat('dd MMMM yyyy').format(DateTime.now());
+        return AddAllergyDialog(
+          allergyNameController: _allergyNameController,
+          symptomsController: _symptomsController,
+          userId: userId,
+          onAddAllergy: (Allergy allergy) {
+            // Check if the allergy is already in the list
+            bool isDuplicate = allergies.any((existingAllergy) =>
+                existingAllergy.name == allergy.name &&
+                existingAllergy.symptoms == allergy.symptoms);
 
-                setState(() {
-                  allergies.add({
-                    'name': _allergyNameController.text,
-                    'symptoms': _symptomsController.text,
-                    'date': formattedDate,
-                  });
-                  _allergyNameController.clear();
-                  _symptomsController.clear();
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('Add'),
-            ),
-          ],
+            if (!isDuplicate) {
+              setState(() {
+                allergies.add(allergy);
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('This allergy already exists')),
+              );
+            }
+          },
         );
       },
     );
   }
 
   void _showEditAllergyDialog(int index) {
-    _allergyNameController.text = allergies[index]['name']!;
-    _symptomsController.text = allergies[index]['symptoms']!;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit Allergy'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _allergyNameController,
-                decoration: const InputDecoration(labelText: 'Allergy Name'),
-              ),
-              TextField(
-                controller: _symptomsController,
-                decoration: const InputDecoration(labelText: 'Symptoms'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  allergies[index]['name'] = _allergyNameController.text;
-                  allergies[index]['symptoms'] = _symptomsController.text;
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
+    // Check if allergies[index] is valid
+    if (allergies.isNotEmpty && index >= 0 && index < allergies.length) {
+      Allergy allergy = allergies[index];
+
+      // Set the allergy details in the controllers
+      _allergyNameController.text = allergy.name;
+      _symptomsController.text = allergy.symptoms;
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return EditAllergyDialog(
+            allergyNameController: _allergyNameController,
+            symptomsController: _symptomsController,
+            allergyId: allergy.id!,
+            onSuccess: () {
+              setState(() {
+                // Update the allergy in the list
+                allergies[index] = Allergy(
+                  id: allergy.id,
+                  name: _allergyNameController.text,
+                  symptoms: _symptomsController.text,
+                  date: allergy.date, // Optionally, update the date if needed
+                  userId: allergy.userId,
+                );
+              });
+            },
+          );
+        },
+      );
+    } else {
+      // Handle the case where the allergy at the provided index is invalid
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Invalid allergy selection or empty list'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _deleteAllergy(int index) {
@@ -255,7 +252,7 @@ class _AllergyPageState extends State<AllergyPage> {
               const SizedBox(height: 20),
               ...allergies.asMap().entries.map((entry) {
                 int index = entry.key;
-                Map<String, String> allergy = entry.value;
+                Allergy allergy = entry.value;
                 return Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -272,7 +269,7 @@ class _AllergyPageState extends State<AllergyPage> {
                           children: [
                             Flexible(
                               child: Text(
-                                allergy['name']!,
+                                allergy.name,
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -299,14 +296,14 @@ class _AllergyPageState extends State<AllergyPage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          allergy['symptoms']!,
+                          allergy.symptoms,
                           style: const TextStyle(fontSize: 16),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 3,
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Added Manually ${allergy['date']}',
+                          'Added on ${allergy.date}',
                           style:
                               const TextStyle(fontSize: 14, color: Colors.grey),
                         ),

@@ -93,6 +93,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.receiverEmail),
+        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.video_call))],
       ),
       body: Column(
         children: [

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../controller/profile_controller.dart';
 
@@ -41,7 +40,7 @@ Future<void> showDeleteConfirmationDialog(
           TextButton(
             onPressed: () {
               // Close the dialog
-              Get.back();
+              Navigator.pop(context);
             },
             child: const Text('Cancel'),
           ),
@@ -51,32 +50,32 @@ Future<void> showDeleteConfirmationDialog(
               final password = passwordController.text.trim();
 
               if (email.isEmpty || password.isEmpty) {
-                Get.snackbar('Error', 'Please enter both email and password');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter both email and password'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+
                 return;
               }
 
               try {
-                // Re-authenticate the user and proceed with account deletion
                 await controller.reAuthenticateAndDeleteAccount(
                     email, password);
 
-                // // First, delete from Firestore
-                // final userData =
-                //     await controller.getUserData(); // fetch user data
-                // if (userData != null) {
-                //   await controller.deleteUserFromFirestore(
-                //       userData.id!); // Delete from Firestore
-                // }
-
-                // // Then, delete from Firebase Authentication
-                // await controller
-                //     .deleteUserFromAuth(password); // Delete from Authentication
-                // // Close the confirmation dialog after successful deletion
-                // Get.back();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Account deleted successfully'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
               } catch (e) {
-                print(
-                    'Error occurred during re-authentication or account deletion: $e');
-                Get.snackbar('Error', 'Failed to authenticate: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please use correct credentials'),
+                  ),
+                );
               }
             },
             child: const Text('Delete Account'),

@@ -72,7 +72,7 @@ class Community extends StatelessWidget {
               itemBuilder: (context, index) {
                 final user = otherUsers[index];
                 return UserTile(
-                  text: user.email,
+                  text: user.fullName,
                   onTap: () {
                     if (user.email != null && user.uid != null) {
                       Navigator.push(
@@ -111,9 +111,6 @@ class Community extends StatelessWidget {
         onTap: () {
           final email = userData["Email"];
           final receiverID = userData["uid"];
-
-          print("Receiver email: $email");
-          print("Receiver id: $receiverID");
 
           if (email != null && receiverID != null) {
             Navigator.push(
