@@ -1,3 +1,4 @@
+import 'package:elderly_care/pages/googlemap/location_sharing.dart';
 import 'package:flutter/material.dart';
 
 class OldAgeHomePage extends StatelessWidget {
@@ -10,13 +11,20 @@ class OldAgeHomePage extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.green,
-          title: const Text('Lalitpur', style: TextStyle(color: Colors.white)),
+          title: const Text('Old Age Homes', style: TextStyle(color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          actions: const [
-            Icon(Icons.location_on, color: Colors.white),
+          actions: [
+            IconButton(
+              onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LocationSharingScreen()));
+      },
+              icon:Icon(Icons.location_on, color: Colors.white,)
+
+            ),
+
           ],
         ),
         body: Padding(
@@ -64,11 +72,15 @@ class OldAgeHomePage extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                'https://via.placeholder.com/80', // Replace with actual image URL
+              child: Container(
                 width: 80,
                 height: 80,
-                fit: BoxFit.cover,
+                color: Colors.grey, // Background color for the icon
+                child: Icon(
+                  Icons.home, // Replace with your desired icon
+                  size: 40,
+                  color: Colors.white, // Icon color
+                ),
               ),
             ),
             const SizedBox(width: 16.0),

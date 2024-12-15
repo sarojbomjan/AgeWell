@@ -48,7 +48,7 @@ class CaregiverBookingCard extends StatelessWidget {
                 const Icon(Icons.calendar_today, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
-                  ' ${_formatDate(startDate)}to ${_formatDate(endDate)}',
+                  ' ${_formatDate(startDate)} to ${_formatDate(endDate)}',
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
@@ -92,7 +92,10 @@ class CaregiverBookingCard extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('View Details'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: const Text('View Details'),
+              ),
               style: ElevatedButton.styleFrom(
                 shadowColor: Colors.blue,
                 shape: RoundedRectangleBorder(
