@@ -1,4 +1,3 @@
-import 'package:elderly_care/caretaker_dashboard/pages/caretaker_dashboard.dart';
 import 'package:elderly_care/pages/googlemap/location_sharing.dart';
 import 'package:elderly_care/pages/privacy_and_policies/privacy_and_policies.dart';
 import 'package:elderly_care/pages/settings/settings_page.dart';
@@ -157,13 +156,6 @@ class ProfilePage extends StatelessWidget {
             icon: LineAwesomeIcons.info_circle_solid,
             onPress: () {
               Get.to(() => const PrivacyAndPolicies());
-            },
-          ),
-          ProfileMenuWidget(
-            title: "Caretaker Dashboard",
-            icon: LineAwesomeIcons.info_circle_solid,
-            onPress: () {
-              Get.to(() => const CaretakerDashboard());
             },
           ),
           ProfileMenuWidget(
