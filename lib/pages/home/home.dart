@@ -1,6 +1,7 @@
 import 'package:elderly_care/pages/home/home_widgets/emergency_contact.dart';
 import 'package:elderly_care/pages/home/home_widgets/social_enagagement_widget.dart';
 import 'package:elderly_care/pages/services_booking/booking.dart';
+import 'package:elderly_care/service/voice_command.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -19,22 +20,26 @@ import 'home_widgets/today_activities.dart';
 import 'home_widgets/upcoming_activities.dart';
 
 class HomeScreen extends StatefulWidget {
+  static final GlobalKey<HomeScreenState> homeKey =
+      GlobalKey<HomeScreenState>();
+
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  void _onNavTap(int index) {
+  void onNavTap(int index) {
     setState(() {
       _currentIndex = index;
     });
   }
 
   String emergencyContact = "";
+  final VoiceCommandService _voiceCommandService = VoiceCommandService();
 
   // Future<void> _onSOSButtonPressed() async {
   //   if (emergencyContact.isEmpty) {
@@ -60,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //   }
   // }
 
-  Future<void> _onSOSButtonPressed() async {
+  Future<void> onSOSButtonPressed() async {
     if (emergencyContact.isEmpty) {
       // If no emergency contact is set, show the dialog
       showDialog(
@@ -160,6 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
       var currentTheme = themeController.themeData;
 
       return Scaffold(
+        key: HomeScreen.homeKey,
         appBar: AppBar(
           backgroundColor: Colors.green,
           title: Row(
@@ -181,26 +187,28 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
-                );
+              icon: const Icon(
+                LineAwesomeIcons.microphone_solid,
+                color: Colors.white,
+              ),
+              onPressed: () async {
+                if (mounted) {
+                  await _voiceCommandService.startListening(context);
+                }
               },
             ),
           ],
         ),
         body: _pages[_currentIndex],
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: _onSOSButtonPressed, // Call the SOS function
+          onPressed: onSOSButtonPressed, // Call the SOS function
           icon: const Icon(Icons.emergency),
           label: const Text('SOS'),
           backgroundColor: Colors.red,
         ),
         bottomNavigationBar: BottomNavBar(
           currentIndex: _currentIndex,
-          onTap: _onNavTap,
+          onTap: onNavTap,
         ),
       );
     });

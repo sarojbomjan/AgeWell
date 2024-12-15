@@ -64,6 +64,8 @@ dependencies:
   flutter_webrtc: ^0.12.3
   awesome_notifications: ^0.10.0
   rxdart: ^0.28.0
+  permission_handler: ^11.3.1
+  speech_to_text: ^7.0.0
 
 dev_dependencies:
   flutter_test:

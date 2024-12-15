@@ -119,6 +119,8 @@ class TodayActivities extends StatelessWidget {
             }
 
             final activities = snapshot.data!.docs;
+            print(
+                'Fetched activities: ${activities.length}'); // Check how many activities were fetched
 
             // Schedule notifications for activities near their time
             for (var activity in activities) {

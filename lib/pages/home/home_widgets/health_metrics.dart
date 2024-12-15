@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/pages/home/home_widgets/health_metric.dart';
+import 'package:elderly_care/pages/medical_record/analysis_record/analysis_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HealthMetrics extends StatelessWidget {
   const HealthMetrics({super.key});
@@ -61,7 +63,12 @@ class HealthMetrics extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AnalysisPage()));
+                  },
                   child: Text(
                     'View more',
                     style: TextStyle(

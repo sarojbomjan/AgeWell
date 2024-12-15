@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -24,6 +25,7 @@ void showAddActivityBottomSheet(BuildContext context) {
         'description': descriptionController.text,
         'category': selectedCategory,
         'createdAt': FieldValue.serverTimestamp(),
+        'userId': FirebaseAuth.instance.currentUser?.uid
       });
 
       Navigator.pop(context);
