@@ -26,28 +26,20 @@ class DashboardOverview extends StatelessWidget {
             children: [
               StatCard(
                 title: 'Total Users',
-                collectionName: 'USERS',
+                collectionNames: ['USERS'],
                 icon: Icons.people,
+                type: "user",
               ),
-              // StatCard(
-              //   title: 'Services Booked',
-              //   collectionName: 'services_booked',
-              //   icon: Icons.calendar_today,
-              // ),
-              // StatCard(
-              //   title: 'Health Alerts',
-              //   collectionName: 'health_alerts',
-              //   icon: Icons.health_and_safety,
-              // ),
-              // StatCard(
-              //   title: 'Active Locations',
-              //   collectionName: 'active_locations',
-              //   icon: Icons.location_on,
-              // ),
+              StatCard(
+                title: 'Services Booked',
+                collectionNames: ['DoctorBooking', 'CaregiverBooking'],
+                icon: Icons.calendar_today,
+                type: 'services',
+              ),
             ],
           ),
           const SizedBox(height: 24),
-          UserTypeBreakdown(), // Dynamically fetch user types
+          UserTypeBreakdown(),
         ],
       ),
     );

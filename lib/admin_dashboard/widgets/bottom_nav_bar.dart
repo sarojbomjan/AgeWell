@@ -26,18 +26,6 @@ class AdminBottomNavBar extends StatelessWidget {
           label: 'Dashboard',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.people),
-          label: 'Users',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.medical_services),
-          label: 'Services',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications),
-          label: 'Alerts',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: 'Profile',
         ),

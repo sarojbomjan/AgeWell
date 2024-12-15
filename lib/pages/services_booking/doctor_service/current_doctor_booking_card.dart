@@ -6,7 +6,8 @@ class CurrentBookingCard extends StatelessWidget {
   final String doctorName;
   final String date;
   final String time;
-  final bookingID;
+  final String bookingID;
+  final String bookingType;
 
   const CurrentBookingCard({
     required this.title,
@@ -14,7 +15,7 @@ class CurrentBookingCard extends StatelessWidget {
     required this.date,
     required this.time,
     required this.bookingID,
-    required String bookingType,
+    required this.bookingType,
   });
 
   @override
@@ -78,7 +79,7 @@ class CurrentBookingCard extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BookingDetailsPage(
                       bookingID: bookingID,
-                      bookingType: 'doctor',
+                      bookingType: bookingType,
                     ),
                   ),
                 );

@@ -1,114 +1,180 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../components/add_new_user.dart';
 
-class UsersPage extends StatefulWidget {
-  const UsersPage({Key? key}) : super(key: key);
+class UserDetailsPage extends StatelessWidget {
+  final String userId;
+  final String userType;
 
-  @override
-  State<UsersPage> createState() => _UsersPageState();
-}
-
-class _UsersPageState extends State<UsersPage> {
-  final Map<String, int> userTypes = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchUserData();
-  }
-
-  Future<void> _fetchUserData() async {
-    try {
-      final querySnapshot = await FirebaseFirestore.instance
-          .collection('USERS') // Replace with your collection name
-          .get();
-
-      final Map<String, int> fetchedUserTypes = {};
-
-      for (var doc in querySnapshot.docs) {
-        final role = doc['Role'] as String? ?? 'Unknown';
-        fetchedUserTypes[role] = (fetchedUserTypes[role] ?? 0) + 1;
-      }
-
-      setState(() {
-        userTypes.clear();
-        userTypes.addAll(fetchedUserTypes);
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching user data: $e')),
-      );
-    }
-  }
+  const UserDetailsPage({
+    Key? key,
+    required this.userId,
+    required this.userType,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'User Management',
-            style: Theme.of(context).textTheme.headlineLarge,
-          ),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'User Statistics',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  userTypes.isEmpty
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : Column(
-                          children: userTypes.entries
-                              .map((entry) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(entry.key,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge),
-                                        Text(entry.value.toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge),
-                                      ],
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('$userType Details'),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("USERS")
+            .doc(userId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const Center(child: Text('User not found'));
+          }
+
+          final userData = snapshot.data!.data() as Map<String, dynamic>;
+          print('User Data: $userData');
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildUserInfoCard(context, userData),
+                const SizedBox(height: 16),
+                _buildAdditionalInfo(context, userData),
+              ],
             ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const AddUserModal(); // No onAddUser required
-                },
-              ).then((_) =>
-                  _fetchUserData()); // Refresh user data after modal closes
-            },
-            child: const Text('Add New User'),
-          ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildUserInfoCard(
+      BuildContext context, Map<String, dynamic> userData) {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              userData['FullName'] ?? 'N/A',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            _buildInfoRow(Icons.email, userData['Email'] ?? 'N/A'),
+            _buildInfoRow(Icons.phone, userData['Phone'] ?? 'N/A'),
+            _buildInfoRow(Icons.location_on, userData['Address'] ?? 'N/A'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Colors.grey),
+          const SizedBox(width: 8),
+          Expanded(child: Text(text)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAdditionalInfo(
+      BuildContext context, Map<String, dynamic> userData) {
+    switch (userType.toLowerCase()) {
+      case 'customer':
+        return _buildCustomerInfo(context, userData);
+      case 'caregiver':
+        return _buildCaregiverInfo(context, userData);
+      case 'doctor':
+        return _buildDoctorInfo(context, userData);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildCustomerInfo(
+      BuildContext context, Map<String, dynamic> userData) {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Customer Information',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCaregiverInfo(
+      BuildContext context, Map<String, dynamic> userData) {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Caregiver Information',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            _buildInfoRow(Icons.work,
+                'Experience: ${userData['Experience'] ?? 'N/A'} years'),
+            _buildInfoRow(Icons.star, 'Skills: ${userData['Skills'] ?? 'N/A'}'),
+            _buildInfoRow(
+                Icons.language, 'Languages: ${userData['Languages'] ?? 'N/A'}'),
+            _buildInfoRow(Icons.access_time,
+                'Work Hours: ${userData['WorkHours'] ?? 'N/A'}'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDoctorInfo(BuildContext context, Map<String, dynamic> userData) {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Doctor Information',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            _buildInfoRow(Icons.local_hospital,
+                'Specialty: ${userData['Specialist'] ?? 'N/A'}'),
+            _buildInfoRow(Icons.star,
+                'Rating: ${userData['Ratings']?.toString() ?? 'N/A'}'),
+            _buildInfoRow(
+                Icons.comment, 'Reviews: ${userData['Reviews'] ?? 'N/A'}'),
+            _buildInfoRow(Icons.access_time,
+                'Availability: ${userData['Availability']?.join(', ') ?? 'N/A'}'),
+          ],
+        ),
       ),
     );
   }
