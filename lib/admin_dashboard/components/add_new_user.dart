@@ -42,36 +42,29 @@ class _AddUserModalState extends State<AddUserModal> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       try {
-        // Get the current authenticated user (admin)
         User? currentUser = FirebaseAuth.instance.currentUser;
 
-        // Save the admin's current credentials to restore session later
         final String adminEmail = currentUser!.email!;
-        final String? adminPassword =
-            await _getAdminPassword(); // Retrieve admin password securely
+        final String? adminPassword = await _getAdminPassword();
 
-        // Create the new user in Firebase Authentication
         UserCredential newUserCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text,
-          password: '12345678', // Set a default password for the new user
+          password: '12345678',
         );
 
         // Get the UID of the new user
         String newUserId = newUserCredential.user!.uid;
 
-        // Create the user data to store in Firestore
         final userData = {
           'FullName': _nameController.text,
           'Email': _emailController.text,
           'Address': _addressController.text,
           'Phone': _phoneController.text,
           'Role': _selectedRole,
-          'AuthUID':
-              newUserId, // Link the Firestore document to the Authentication UID
+          'AuthUID': newUserId,
         };
 
-        // Add role-specific data for Doctor or Caregiver
         if (_selectedRole == 'Doctor') {
           userData.addAll({
             'Specialist': _specialistController.text,
@@ -106,9 +99,6 @@ class _AddUserModalState extends State<AddUserModal> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User added successfully!')),
         );
-
-        // Optionally, navigate back to the dashboard without logging out
-        //Navigator.of(context).pop();
       } catch (error) {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -119,9 +109,7 @@ class _AddUserModalState extends State<AddUserModal> {
   }
 
   Future<String?> _getAdminPassword() async {
-    // Implement a secure way to retrieve the admin's password.
-    // For example, you can use Secure Storage to store and retrieve the admin's password securely.
-    return '12345678'; // Replace with actual implementation
+    return '12345678';
   }
 
   @override

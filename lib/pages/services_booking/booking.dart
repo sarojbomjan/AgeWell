@@ -19,39 +19,31 @@ class Booking extends StatefulWidget {
 }
 
 class _BookingState extends State<Booking> {
-  Future<BookingModel>? _currentBooking;
-  Future<CaregiverBookingModel>? _currentCaregiverBooking;
+  Future<List<BookingModel>>? _currentBooking;
+  Future<List<CaregiverBookingModel>>? _currentCaregiverBooking;
 
-  // Fetch the current doctor booking for the user
-  Future<BookingModel> _fetchCurrentBooking() async {
+// Fetch the current doctor booking for the user
+  Future<List<BookingModel>> _fetchCurrentBooking() async {
     String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('DoctorBooking')
         .where('userId', isEqualTo: currentUserId) // Filter by userId
         .get();
 
-    if (snapshot.docs.isNotEmpty) {
-      var doc = snapshot.docs.first;
-      return BookingModel.fromFirestore(doc);
-    } else {
-      throw Exception('Doctor booking not found');
-    }
+    return snapshot.docs.map((doc) => BookingModel.fromFirestore(doc)).toList();
   }
 
-  // Fetch the current caregiver booking for the user
-  Future<CaregiverBookingModel> _fetchCaregiverBooking() async {
+// Fetch the current caregiver booking for the user
+  Future<List<CaregiverBookingModel>> _fetchCaregiverBooking() async {
     String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('CaregiverBooking')
         .where('userID', isEqualTo: currentUserId)
         .get();
 
-    if (snapshot.docs.isNotEmpty) {
-      var doc = snapshot.docs.first;
-      return CaregiverBookingModel.fromFirestore(doc);
-    } else {
-      throw Exception('Caregiver booking not found');
-    }
+    return snapshot.docs
+        .map((doc) => CaregiverBookingModel.fromFirestore(doc))
+        .toList();
   }
 
   @override
@@ -68,145 +60,166 @@ class _BookingState extends State<Booking> {
         title: const Text('Services Booking'),
         backgroundColor: Colors.blue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Search for facilities',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.blue),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Search Bar
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search for facilities',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Categories
-            const Text(
-              'All Categories',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            // Category Cards
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DoctorPage()),
-                      );
-                    },
-                    child: const CategoryCard(
-                      title: 'Doctor',
-                      subtitle: 'Consult',
-                      icon: Icons.person,
-                      backgroundColor: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CaretakerPage()),
-                      );
-                    },
-                    child: const CategoryCard(
-                      title: 'Caretaker',
-                      subtitle: 'Hire',
-                      icon: Icons.person,
-                      backgroundColor: Colors.orange,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const OldAgeHomePage()),
-                      );
-                    },
-                    child: const CategoryCard(
-                      title: 'Old Age Home',
-                      subtitle: 'Join',
-                      icon: Icons.home,
-                      backgroundColor: Colors.blue,
-                    ),
-                  ),
-                ],
+              const SizedBox(height: 20),
+              // Categories
+              const Text(
+                'All Categories',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            ),
+              const SizedBox(height: 10),
+              // Category Cards
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const DoctorPage()),
+                        );
+                      },
+                      child: const CategoryCard(
+                        title: 'Doctor',
+                        subtitle: 'Consult',
+                        icon: Icons.person,
+                        backgroundColor: Colors.green,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CaretakerPage()),
+                        );
+                      },
+                      child: const CategoryCard(
+                        title: 'Caretaker',
+                        subtitle: 'Hire',
+                        icon: Icons.person,
+                        backgroundColor: Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const OldAgeHomePage()),
+                        );
+                      },
+                      child: const CategoryCard(
+                        title: 'Old Age Home',
+                        subtitle: 'Join',
+                        icon: Icons.home,
+                        backgroundColor: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-            const SizedBox(height: 20),
-            // Current Booking - Doctor Booking
-            const Text(
-              'Current Doctor Booking',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            FutureBuilder<BookingModel>(
+              const SizedBox(height: 20),
+              // Current Booking - Doctor Booking
+              const Text(
+                'Current Doctor Booking',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              FutureBuilder<List<BookingModel>>(
                 future: _currentBooking,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData) {
+                    return const Text('No doctor booking found');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Text('No doctor booking found');
                   } else {
-                    final booking = snapshot.data!;
-                    return CurrentBookingCard(
-                      title: booking.description,
-                      doctorName: booking.doctorName,
-                      date: booking.appointmentDate,
-                      time: booking.appointmentTime,
-                      bookingType: 'doctor',
-                      bookingID: booking.bookingID,
+                    final bookings = snapshot.data!;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: bookings.length,
+                      itemBuilder: (context, index) {
+                        final booking = bookings[index];
+                        return CurrentBookingCard(
+                          title: booking.description,
+                          doctorName: booking.doctorName,
+                          date: booking.appointmentDate,
+                          time: booking.appointmentTime,
+                          bookingType: 'doctor',
+                          bookingID: booking.bookingID,
+                        );
+                      },
                     );
                   }
-                }),
+                },
+              ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Current Caregiver Booking
-            const Text(
-              'Current Caregiver Booking',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            FutureBuilder<CaregiverBookingModel>(
+              // Current Caregiver Booking
+              const Text(
+                'Current Caregiver Booking',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              FutureBuilder<List<CaregiverBookingModel>>(
                 future: _currentCaregiverBooking,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData) {
+                    return const Text(
+                        'No caregiver booking available, book now');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Text('No caregiver booking found');
                   } else {
-                    final caregiverBooking = snapshot.data!;
-                    return CaregiverBookingCard(
-                      caregiverName: caregiverBooking.caregiverName,
-                      startDate: caregiverBooking.startDate,
-                      startTime: caregiverBooking.startTime,
-                      endDate: caregiverBooking.endDate,
-                      endTime: caregiverBooking.endTime,
-                      location: caregiverBooking.location,
-                      bookingID: caregiverBooking.bookingID,
+                    final caregiverBookings = snapshot.data!;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: caregiverBookings.length,
+                      itemBuilder: (context, index) {
+                        final caregiverBooking = caregiverBookings[index];
+                        return CaregiverBookingCard(
+                          caregiverName: caregiverBooking.caregiverName,
+                          startDate: caregiverBooking.startDate,
+                          startTime: caregiverBooking.startTime,
+                          endDate: caregiverBooking.endDate,
+                          endTime: caregiverBooking.endTime,
+                          location: caregiverBooking.location,
+                          bookingID: caregiverBooking.bookingID,
+                        );
+                      },
                     );
                   }
-                }),
-          ],
+                },
+              )
+            ],
+          ),
         ),
       ),
     );

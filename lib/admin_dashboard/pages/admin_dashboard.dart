@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/dashboard_overview.dart';
-import 'alerts.dart';
-import 'services.dart';
-import 'users_page.dart';
+
 import '../../authentication/user_authentication.dart';
 import '../../pages/profile/profile_page.dart';
 
@@ -19,17 +17,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   final List<Widget> _pages = [
     const DashboardOverview(),
-    const UsersPage(),
-    const ServicesPage(),
-    const AlertsPage(),
     const ProfilePage(),
   ];
 
   final List<String> _titles = [
     'Dashboard Overview',
-    'Users Management',
-    'Services Management',
-    'Alerts',
     'Profile',
   ];
 

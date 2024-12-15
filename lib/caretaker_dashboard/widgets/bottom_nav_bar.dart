@@ -1,10 +1,14 @@
-import 'package:elderly_care/caretaker_dashboard/pages/caretaker_dashboard.dart';
-import 'package:elderly_care/pages/profile/profile_page.dart';
-import 'package:elderly_care/pages/settings/settings_page.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({super.key});
+  final int selectedIndex;
+  final Function(int) onItemTapped;
+
+  const BottomNavBar({
+    Key? key,
+    required this.selectedIndex,
+    required this.onItemTapped,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,39 +19,23 @@ class BottomNavBar extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
+          icon: Icon(Icons.people),
+          label: 'Patients',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today),
+          label: 'Schedule',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: 'Profile',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Settings',
-        ),
       ],
-      currentIndex: 0,
-      selectedItemColor: Colors.blue,
-      onTap: (int index) {
-        switch (index) {
-          case 0:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CaretakerDashboard()),
-            );
-            break;
-          case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-            break;
-          case 2:
-            // Navigate to Settings page
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingsPage()),
-            );
-            break;
-        }
-      },
+      currentIndex: selectedIndex,
+      selectedItemColor: Theme.of(context).colorScheme.primary,
+      unselectedItemColor:
+          Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+      onTap: onItemTapped,
     );
   }
 }
