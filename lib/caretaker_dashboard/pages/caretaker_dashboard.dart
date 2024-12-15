@@ -1,10 +1,12 @@
-import 'package:elderly_care/caretaker_dashboard/pages/appointment_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:elderly_care/caretaker_dashboard/widgets/to_do_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:elderly_care/caretaker_dashboard/widgets/bottom_nav_bar.dart';
+import 'package:elderly_care/caretaker_dashboard/pages/appointment_page.dart';
 import 'package:elderly_care/caretaker_dashboard/pages/next_appointment.dart';
 import 'package:elderly_care/pages/health/health.dart';
-import 'package:elderly_care/caretaker_dashboard/widgets/bottom_nav_bar.dart';
-
-import '../../pages/profile/profile_page.dart';
+import 'package:elderly_care/pages/profile/profile_page.dart';
 
 class CaretakerDashboard extends StatefulWidget {
   const CaretakerDashboard({Key? key}) : super(key: key);
@@ -18,8 +20,7 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     DashboardHome(),
-    Text('Patients'),
-    SchedulePage(),
+    ScheduleContent(),
     ProfilePage(),
   ];
 
@@ -33,13 +34,17 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Caretaker Dashboard',
+        title: const Text(
+          'Caretaker Dashboard',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white,),
+            icon: const Icon(
+              Icons.notifications,
+              color: Colors.white,
+            ),
             onPressed: () {
               // Handle notifications
             },
@@ -100,6 +105,7 @@ class DashboardHome extends StatelessWidget {
             'Recent Notes',
             'Patient had a good night\'s sleep. No significant changes.',
             '/recentNotes',
+            onTap: () {},
           ),
           const SizedBox(height: 16.0),
           _buildDetailCard(
@@ -108,6 +114,9 @@ class DashboardHome extends StatelessWidget {
             'To-Do List',
             'Administer Medication\nPhysical Therapy\nPrepare Meals',
             '/toDoList',
+            onTap: () {
+              showToDoBottomSheet(context); // Show bottom sheet modal
+            },
           ),
           const SizedBox(height: 16.0),
           _buildDetailCard(
@@ -116,7 +125,12 @@ class DashboardHome extends StatelessWidget {
             'Emergency Contacts',
             'Doctor: (555) 123-4567\nFamily: (555) 987-6543',
             '/emergencyContacts',
+            onTap: () {},
           ),
+          const SizedBox(
+            height: 16,
+          ),
+          _buildActivitiesList()
         ],
       ),
     );
@@ -171,13 +185,52 @@ class DashboardHome extends StatelessWidget {
     );
   }
 
+  Widget _buildActivitiesList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('ACTIVITIES')
+          .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+          .orderBy('createdAt', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching activities'));
+        }
+
+        final activities = snapshot.data?.docs ?? [];
+
+        if (activities.isEmpty) {
+          return const Center(child: Text('No activities added yet.'));
+        }
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: activities.length,
+          itemBuilder: (context, index) {
+            final activity = activities[index].data() as Map<String, dynamic>;
+
+            return ListTile(
+              title: Text(activity['name'] ?? 'No name'),
+              subtitle: Text('${activity['time']} - ${activity['category']}'),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildDetailCard(
     BuildContext context,
     IconData icon,
     String title,
     String content,
-    String route,
-  ) {
+    String route, {
+    required VoidCallback onTap,
+  }) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -199,9 +252,7 @@ class DashboardHome extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
           ),
         ),
-        onTap: () {
-          Navigator.pushNamed(context, route);
-        },
+        onTap: onTap,
       ),
     );
   }

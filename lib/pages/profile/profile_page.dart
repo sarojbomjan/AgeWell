@@ -132,7 +132,7 @@ class ProfilePage extends StatelessWidget {
             },
           ),
           ProfileMenuWidget(
-            title: "Track Locatiom",
+            title: "Track Location",
             icon: LineAwesomeIcons.location_arrow_solid,
             onPress: () {
               Get.to(() => const LocationSharingScreen());

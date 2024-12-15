@@ -1,36 +1,39 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-class SchedulePage extends StatelessWidget {
-  const SchedulePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Schedule'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      body: const ScheduleContent(),
-    );
-  }
-}
 
 class ScheduleContent extends StatelessWidget {
   const ScheduleContent({Key? key}) : super(key: key);
 
   Future<List<Appointment>> _fetchAppointments() async {
-    final querySnapshot =
-        await FirebaseFirestore.instance.collection('CaretakerBooking').get();
+    final caregiverID = FirebaseAuth.instance.currentUser?.uid;
 
-    return querySnapshot.docs.map((doc) {
-      return Appointment(
-        patientName: doc['patientName'],
-        time: (doc['time'] as Timestamp).toDate(),
-        type: doc['type'],
-      );
-    }).toList();
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('CaregiverBooking')
+        .where('caregiverID', isEqualTo: caregiverID)
+        .get();
+
+    List<Appointment> appointments = [];
+
+    for (var doc in querySnapshot.docs) {
+      final userID = doc['userID'];
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('USERS')
+          .doc(userID)
+          .get();
+
+      final customerName = userSnapshot['FullName'] ?? 'Unknown';
+
+      appointments.add(Appointment(
+        caregiverName: doc['caregiverName'],
+        customerName: customerName,
+        time: (doc['startDate'] as Timestamp).toDate(),
+        type: doc['selectedTime'],
+      ));
+    }
+
+    return appointments;
   }
 
   @override
@@ -102,19 +105,19 @@ class ScheduleContent extends StatelessWidget {
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).colorScheme.primary,
           child: Text(
-            appointment.patientName.substring(0, 1),
+            appointment.caregiverName.substring(0, 1),
             style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           ),
         ),
         title: Text(
-          appointment.patientName,
+          appointment.caregiverName,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         subtitle: Text(
-          '${DateFormat('h:mm a').format(appointment.time)} - ${appointment.type}',
+          '${DateFormat('h:mm a').format(appointment.time)} - ${appointment.type}\nCustomer: ${appointment.customerName}',
           style:
               TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
@@ -143,7 +146,8 @@ class ScheduleContent extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
-              _buildDetailRow('Patient', appointment.patientName),
+              _buildDetailRow('Caregiver', appointment.caregiverName),
+              _buildDetailRow('Customer', appointment.customerName),
               _buildDetailRow(
                   'Time', DateFormat('h:mm a').format(appointment.time)),
               _buildDetailRow('Type', appointment.type),
@@ -181,12 +185,14 @@ class ScheduleContent extends StatelessWidget {
 }
 
 class Appointment {
-  final String patientName;
+  final String caregiverName;
+  final String customerName;
   final DateTime time;
   final String type;
 
   Appointment({
-    required this.patientName,
+    required this.caregiverName,
+    required this.customerName,
     required this.time,
     required this.type,
   });
