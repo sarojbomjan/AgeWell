@@ -55,7 +55,7 @@ class _DoctorPageState extends State<DoctorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Doctor Appointment'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.green,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

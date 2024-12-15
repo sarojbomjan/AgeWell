@@ -39,7 +39,7 @@ class CaregiverBookingCard extends StatelessWidget {
             // Caregiver name
             Text(
               "Booking information",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
             ),
             const SizedBox(height: 10),
             // Start and End Date

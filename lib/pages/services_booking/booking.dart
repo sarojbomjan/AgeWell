@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/pages/services_booking/caretaker_service/caretaker_page.dart';
 import 'package:elderly_care/pages/services_booking/doctor_service/current_doctor_booking_card.dart';
 import 'package:elderly_care/pages/services_booking/doctor_service/doctor_page.dart';
+import 'package:elderly_care/pages/services_booking/emergency_service/emergency_page.dart';
 import 'package:elderly_care/pages/services_booking/old_age_home_service/old_age_home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -134,6 +135,22 @@ class _BookingState extends State<Booking> {
                         subtitle: 'Join',
                         icon: Icons.home,
                         backgroundColor: Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const EmergencyPage()),
+                        );
+                      },
+                      child: const CategoryCard(
+                        title: 'Emergency',
+                        subtitle: 'Call',
+                        icon: Icons.bus_alert,
+                        backgroundColor: Colors.red,
                       ),
                     ),
                   ],
