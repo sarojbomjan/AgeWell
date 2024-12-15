@@ -1,6 +1,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elderly_care/pages/home/home_widgets/activity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../home_functionalities/add_activity.dart';
@@ -10,6 +11,8 @@ class TodayActivities extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     Future<void> scheduleActivityReminder(
         String activityId, String activityTime) async {
       final format = DateFormat("h:mm a");
@@ -94,6 +97,7 @@ class TodayActivities extends StatelessWidget {
         StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('ACTIVITIES')
+              .where('userId', isEqualTo: currentUser!.uid)
               .orderBy('createdAt', descending: true)
               .snapshots(),
           builder: (context, snapshot) {
