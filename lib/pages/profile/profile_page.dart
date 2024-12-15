@@ -160,13 +160,6 @@ class ProfilePage extends StatelessWidget {
             },
           ),
           ProfileMenuWidget(
-            title: "Caretaker Dashboard",
-            icon: LineAwesomeIcons.info_circle_solid,
-            onPress: () {
-              Get.to(() => const CaretakerDashboard());
-            },
-          ),
-          ProfileMenuWidget(
             title: "Generate QR Code",
             icon: LineAwesomeIcons.qrcode_solid,
             onPress: () {

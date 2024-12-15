@@ -33,11 +33,13 @@ class _CaretakerDashboardState extends State<CaretakerDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Caretaker Dashboard'),
+        title: const Text('Caretaker Dashboard',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications, color: Colors.white,),
             onPressed: () {
               // Handle notifications
             },
