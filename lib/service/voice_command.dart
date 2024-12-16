@@ -1,16 +1,22 @@
 import 'package:elderly_care/pages/community/community.dart';
 import 'package:elderly_care/pages/health/health.dart';
-import 'package:elderly_care/pages/home/home.dart';
+import 'package:elderly_care/pages/services_booking/caretaker_service/caretaker_page.dart';
+import 'package:elderly_care/pages/services_booking/doctor_service/doctor_page.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-
 import 'localization_service.dart';
 
 class VoiceCommandService {
   final stt.SpeechToText _speech = stt.SpeechToText();
-  String _languageCode = 'en'; // Default to English
+  String _languageCode = 'en';
+
+  void Function()? onSOS;
+
+  void setSOSCallback(void Function()? callback) {
+    onSOS = callback;
+    print('SOS callback set: ${onSOS != null}');
+  }
 
   // Request permission for microphone
   Future<void> requestPermission() async {
@@ -30,7 +36,6 @@ class VoiceCommandService {
     );
 
     if (available) {
-      // Start listening with the localeId for the selected language
       _speech.listen(
         localeId: _languageCode,
         onResult: (result) {
@@ -49,22 +54,40 @@ class VoiceCommandService {
   }
 
   void _processCommand(BuildContext context, String command) {
-    final homeScreenState = HomeScreen.homeKey.currentState;
-    if (homeScreenState != null && homeScreenState.mounted) {
-      if (command.contains('heart rate')) {
-        homeScreenState.onNavTap(1); // Navigate to Health page (index 1)
-      } else if (command.contains('emergency')) {
-        homeScreenState.onSOSButtonPressed();
-      } else if (command.contains('chat')) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Community()),
-        );
+    if (command.contains('health')) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Health()));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Navigating to Health')),
+      );
+    } else if (command.contains('chat')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Community()),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Opening chat')),
+      );
+    } else if (command.contains('call')) {
+      // Call the SOS functionality
+      if (onSOS != null) {
+        onSOS!(); // Trigger SOS functionality
       } else {
-        print('Command not recognized: $command');
+        print('SOS callback not set.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('SOS not set')),
+        );
       }
+    } else if (command.contains('doctor')) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => DoctorPage()));
+    } else if (command.contains('care')) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CaretakerPage()));
     } else {
-      print("HomeScreen state not found or widget not mounted");
+      print('Command not recognized: $command');
     }
   }
 

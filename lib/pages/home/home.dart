@@ -8,8 +8,7 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:elderly_care/pages/community/community.dart';
 import 'package:elderly_care/pages/health/health.dart';
 import 'package:elderly_care/pages/profile/profile_page.dart';
-import 'package:elderly_care/pages/settings/settings_page.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme/theme.dart';
 import '../../theme/theme_provider.dart';
@@ -20,8 +19,8 @@ import 'home_widgets/today_activities.dart';
 import 'home_widgets/upcoming_activities.dart';
 
 class HomeScreen extends StatefulWidget {
-  static final GlobalKey<HomeScreenState> homeKey =
-      GlobalKey<HomeScreenState>();
+  // static final GlobalKey<HomeScreenState> homeKey =
+  //     GlobalKey<HomeScreenState>();
 
   const HomeScreen({super.key});
 
@@ -40,30 +39,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   String emergencyContact = "";
   final VoiceCommandService _voiceCommandService = VoiceCommandService();
-
-  // Future<void> _onSOSButtonPressed() async {
-  //   if (emergencyContact.isEmpty) {
-  //     // If no emergency contact is set, show the dialog
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) => EmergencyContactDialog(
-  //         onContactSaved: (contact) {
-  //           setState(() {
-  //             // Update emergency contact when saved
-  //             emergencyContact = contact;
-  //           });
-
-  //           // Automatically dial the emergency contact after saving it
-  //           _launchDialer(
-  //               emergencyContact); // Call helper method to launch dialer
-  //         },
-  //       ),
-  //     );
-  //   } else {
-  //     // If emergency contact is set, directly launch the dialer
-  //     _launchDialer(emergencyContact);
-  //   }
-  // }
+  bool _isListening = false;
 
   Future<void> onSOSButtonPressed() async {
     if (emergencyContact.isEmpty) {
@@ -76,6 +52,7 @@ class HomeScreenState extends State<HomeScreen> {
               // Update emergency contact when saved
               emergencyContact = contact;
             });
+            print('SOS button pressed. Emergency contact: $emergencyContact');
 
             // Show success message after saving contact
             ScaffoldMessenger.of(context).showSnackBar(
@@ -91,6 +68,12 @@ class HomeScreenState extends State<HomeScreen> {
       // If emergency contact is set, launch the dialer
       _launchDialer(emergencyContact);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _voiceCommandService.setSOSCallback(onSOSButtonPressed);
   }
 
 // Helper method to launch the dialer
@@ -165,7 +148,7 @@ class HomeScreenState extends State<HomeScreen> {
       var currentTheme = themeController.themeData;
 
       return Scaffold(
-        key: HomeScreen.homeKey,
+        // key: HomeScreen.homeKey,
         appBar: AppBar(
           backgroundColor: Colors.green,
           title: Row(
@@ -193,10 +176,29 @@ class HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: () async {
                 if (mounted) {
+                  setState(() {
+                    _isListening = true;
+                  });
+
                   await _voiceCommandService.startListening(context);
+
+                  setState(() {
+                    _isListening = false;
+                  });
                 }
               },
             ),
+            if (_isListening) // Show feedback only when listening
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  'Listening...',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
           ],
         ),
         body: _pages[_currentIndex],

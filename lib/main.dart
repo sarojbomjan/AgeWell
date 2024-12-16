@@ -13,7 +13,6 @@ import 'theme/theme_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase and then initialize other dependencies
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AwesomeNotifications().initialize(null, [
     NotificationChannel(
@@ -72,8 +71,6 @@ class _MyAppState extends State<MyApp> {
         theme: currentTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
-        defaultTransition: Transition.leftToRightWithFade,
-        transitionDuration: const Duration(milliseconds: 500),
         home: const CircularProgressIndicator(),
       );
     });

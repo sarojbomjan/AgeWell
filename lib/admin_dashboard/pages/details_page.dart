@@ -1,3 +1,4 @@
+import 'package:elderly_care/admin_dashboard/components/add_new_user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/service_list_item.dart';
@@ -81,6 +82,15 @@ class DetailPage extends StatelessWidget {
                 ],
               ),
             ),
+            ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const AddUserModal();
+                      });
+                },
+                child: Text("Add User"))
           ],
         ),
       ),

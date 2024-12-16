@@ -1,5 +1,7 @@
 {
-  "heart_rate": "Heart Rate",
-  "emergency_call": "emergency",
-  "chat": "chat"
+  "heart_rate": "health",
+  "emergency_call": "call",
+  "chat": "chat",
+  "doctor": "doctor",
+  "caregiver": "care"
 }
