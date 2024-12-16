@@ -199,13 +199,8 @@ class _AddUserModalState extends State<AddUserModal> {
                     labelText: 'Role',
                     border: OutlineInputBorder(),
                   ),
-                  items: [
-                    'Caregiver',
-                    'Elderly User',
-                    'Family Member',
-                    'Emergency Contact',
-                    'Doctor'
-                  ].map((String value) {
+                  items: ['Caregiver', 'Family Member', 'Doctor']
+                      .map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
