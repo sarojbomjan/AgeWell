@@ -47,6 +47,10 @@ class _OldAgeHomeDetailsState extends State<OldAgeHomeDetails> {
       appBar: AppBar(
         title: const Text('Old Age Home Details'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

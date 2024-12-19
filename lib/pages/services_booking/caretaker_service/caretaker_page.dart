@@ -56,7 +56,7 @@ class _CaretakerPageState extends State<CaretakerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Caretaker Appointment'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.orange,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
