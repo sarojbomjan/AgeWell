@@ -162,7 +162,9 @@ class ProfilePage extends StatelessWidget {
             title: "Generate QR Code",
             icon: LineAwesomeIcons.qrcode_solid,
             onPress: () {
-              Get.to(() => GenerateQrCode(userData: userData));
+              Get.to(() => GenerateQrCode(
+                    userData: userData,
+                  ));
             },
           ),
           const Divider(),

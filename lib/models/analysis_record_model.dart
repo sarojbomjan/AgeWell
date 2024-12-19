@@ -1,4 +1,6 @@
 class MedicalAnalysis {
+  String? id;
+  String userId; // ID of the user who owns the analysis
   String testDate;
   String fastingLevels;
   String ogtt;
@@ -8,6 +10,8 @@ class MedicalAnalysis {
   String cholesterol;
 
   MedicalAnalysis({
+    this.id,
+    required this.userId,
     required this.testDate,
     required this.fastingLevels,
     required this.ogtt,
@@ -17,9 +21,9 @@ class MedicalAnalysis {
     required this.cholesterol,
   });
 
-  // Convert to a Firestore-compatible map
   Map<String, dynamic> toMap() {
     return {
+      'userId': userId,
       'testDate': testDate,
       'fastingLevels': fastingLevels,
       'ogtt': ogtt,
@@ -30,9 +34,10 @@ class MedicalAnalysis {
     };
   }
 
-  // Create a model from Firestore data
   factory MedicalAnalysis.fromMap(Map<String, dynamic> map, String documentId) {
     return MedicalAnalysis(
+      id: documentId,
+      userId: map['userId'] ?? '',
       testDate: map['testDate'] ?? '',
       fastingLevels: map['fastingLevels'] ?? '',
       ogtt: map['ogtt'] ?? '',

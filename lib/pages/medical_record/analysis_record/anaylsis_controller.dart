@@ -11,13 +11,19 @@ class AnalysisController {
   // Add new analysis record
   Future<void> addAnalysis(MedicalAnalysis analysis) async {
     if (userId == null) throw Exception("User not authenticated");
-    await _collection.doc(userId).set(analysis.toMap());
+
+    analysis.userId = userId!;
+
+    await _collection.add(analysis.toMap());
   }
 
   // Update an analysis record
   Future<void> updateAnalysis(MedicalAnalysis analysis) async {
     if (userId == null) throw Exception("User not authenticated");
-    await _collection.doc(userId).update(analysis.toMap());
+    if (analysis.id == null)
+      throw Exception("Analysis ID is required for updates");
+
+    await _collection.doc(analysis.id).update(analysis.toMap());
   }
 
   // Delete an analysis record
@@ -26,15 +32,17 @@ class AnalysisController {
   }
 
   // Fetch analysis records for the current user
-  Stream<MedicalAnalysis?> getAnalysis() {
+  Stream<List<MedicalAnalysis>> getUserAnalyses() {
     if (userId == null) throw Exception("User not authenticated");
-    return _collection.doc(userId).snapshots().map((snapshot) {
-      if (snapshot.exists) {
+
+    return _collection
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
         return MedicalAnalysis.fromMap(
-            snapshot.data() as Map<String, dynamic>, snapshot.id);
-      } else {
-        return null;
-      }
+            doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
     });
   }
 }

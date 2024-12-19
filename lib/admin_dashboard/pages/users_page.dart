@@ -94,8 +94,8 @@ class UserDetailsPage extends StatelessWidget {
   Widget _buildAdditionalInfo(
       BuildContext context, Map<String, dynamic> userData) {
     switch (userType.toLowerCase()) {
-      case 'customer':
-        return _buildCustomerInfo(context, userData);
+      // case 'customer':
+      //   return _buildCustomerInfo(context, userData);
       case 'caregiver':
         return _buildCaregiverInfo(context, userData);
       case 'doctor':
@@ -105,25 +105,25 @@ class UserDetailsPage extends StatelessWidget {
     }
   }
 
-  Widget _buildCustomerInfo(
-      BuildContext context, Map<String, dynamic> userData) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Customer Information',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildCustomerInfo(
+  //     BuildContext context, Map<String, dynamic> userData) {
+  //   return Card(
+  //     elevation: 2,
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(16.0),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text(
+  //             'Customer Information',
+  //             style: Theme.of(context).textTheme.titleLarge,
+  //           ),
+  //           const SizedBox(height: 8),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildCaregiverInfo(
       BuildContext context, Map<String, dynamic> userData) {

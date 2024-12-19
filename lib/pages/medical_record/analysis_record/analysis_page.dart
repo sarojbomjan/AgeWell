@@ -22,7 +22,6 @@ class _AnalysisPageState extends State<AnalysisPage> {
   final TextEditingController hba1cController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
 
-  // Date picker function
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -39,14 +38,9 @@ class _AnalysisPageState extends State<AnalysisPage> {
   }
 
   void _updateValues() {
-    if (dateController.text.isNotEmpty &&
-        fastingLevelsController.text.isNotEmpty &&
-        ogttController.text.isNotEmpty &&
-        hba1cController.text.isNotEmpty &&
-        uricAcidController.text.isNotEmpty &&
-        bloodSugarController.text.isNotEmpty &&
-        cholesterolController.text.isNotEmpty) {
+    if (_areFieldsValid()) {
       final analysis = MedicalAnalysis(
+        userId: '',
         testDate: dateController.text,
         fastingLevels: fastingLevelsController.text,
         ogtt: ogttController.text,
@@ -57,19 +51,32 @@ class _AnalysisPageState extends State<AnalysisPage> {
       );
 
       _controller.addAnalysis(analysis).then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Analysis data saved successfully!')),
-        );
+        _showSnackbar('Analysis data saved successfully!', Colors.green);
       }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save data: $error')),
-        );
+        _showSnackbar('Failed to save data: $error', Colors.red);
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill all fields')),
-      );
+      _showSnackbar('Please fill all fields correctly', Colors.orange);
     }
+  }
+
+  bool _areFieldsValid() {
+    return dateController.text.isNotEmpty &&
+        fastingLevelsController.text.isNotEmpty &&
+        ogttController.text.isNotEmpty &&
+        hba1cController.text.isNotEmpty &&
+        uricAcidController.text.isNotEmpty &&
+        bloodSugarController.text.isNotEmpty &&
+        cholesterolController.text.isNotEmpty;
+  }
+
+  void _showSnackbar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+      ),
+    );
   }
 
   @override
@@ -79,8 +86,9 @@ class _AnalysisPageState extends State<AnalysisPage> {
   }
 
   Future<void> _fetchData() async {
-    _controller.getAnalysis().listen((analysis) {
-      if (analysis != null) {
+    _controller.getUserAnalyses().listen((analyses) {
+      if (analyses.isNotEmpty) {
+        final analysis = analyses.first;
         setState(() {
           dateController.text = analysis.testDate;
           fastingLevelsController.text = analysis.fastingLevels;
@@ -131,70 +139,47 @@ class _AnalysisPageState extends State<AnalysisPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Analysis',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              const Text(
+              _buildHeader('Analysis'),
+              _buildSection(
                 'Blood Test',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal),
-              ),
-              const SizedBox(height: 10),
-              const Text(
                 'A blood test is commonly used to check for various medical conditions. It can assess glucose, cholesterol levels, electrolytes, and liver enzymes, among other factors.',
-                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 20),
               _buildDatePickerField('Test Date', dateController),
-              const SizedBox(height: 20),
-              _buildAnalysisField('GLUCOSE'),
+              const SizedBox(
+                height: 15,
+              ),
+              _buildSection('GLUCOSE'),
               _buildTextField('Fasting Levels', fastingLevelsController),
-              const SizedBox(height: 10),
+              const SizedBox(
+                height: 15,
+              ),
               _buildTextField(
                   'Oral Glucose Tolerance Test (OGTT)', ogttController),
-              const SizedBox(height: 10),
+              const SizedBox(
+                height: 15,
+              ),
               _buildTextField('Hemoglobin A1c (HbA1c)', hba1cController),
-              const SizedBox(height: 20),
-              _buildAnalysisField('ELECTROLYTES'),
+              const SizedBox(
+                height: 15,
+              ),
+              _buildSection('ELECTROLYTES'),
               _buildTextField('Uric Acid', uricAcidController),
-              const SizedBox(height: 20),
-              _buildAnalysisField('LIVER ENZYMES'),
+              const SizedBox(
+                height: 15,
+              ),
+              _buildSection('LIVER ENZYMES'),
               _buildTextField('Blood Sugar', bloodSugarController),
-              const SizedBox(height: 20),
-              _buildAnalysisField('LIPIDS'),
+              const SizedBox(
+                height: 15,
+              ),
+              _buildSection('LIPIDS'),
               _buildTextField('Cholesterol', cholesterolController),
               const SizedBox(height: 20),
               Row(
                 children: [
-                  ElevatedButton(
-                    onPressed: _updateValues,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      minimumSize: const Size(150, 50), // Adjust button size
-                    ),
-                    child: const Text('Update', style: TextStyle(fontSize: 18)),
-                  ),
+                  _buildActionButton('Update', Colors.teal, _updateValues),
                   const SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: _clearValues,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      minimumSize: const Size(150, 50), // Adjust button size
-                    ),
-                    child: const Text('Clear', style: TextStyle(fontSize: 18)),
-                  ),
+                  _buildActionButton('Clear', Colors.red, _clearValues),
                 ],
               ),
             ],
@@ -204,7 +189,14 @@ class _AnalysisPageState extends State<AnalysisPage> {
     );
   }
 
-  Widget _buildAnalysisField(String title) {
+  Widget _buildHeader(String title) {
+    return Text(
+      title,
+      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildSection(String title, [String? description]) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -213,7 +205,13 @@ class _AnalysisPageState extends State<AnalysisPage> {
           style: const TextStyle(
               fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
         ),
+        if (description != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(description, style: const TextStyle(fontSize: 16)),
+          ),
         const Divider(color: Colors.teal),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -226,8 +224,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-            vertical: 10, horizontal: 15), // Add padding inside the field
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       ),
     );
   }
@@ -245,6 +243,21 @@ class _AnalysisPageState extends State<AnalysisPage> {
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       ),
+    );
+  }
+
+  Widget _buildActionButton(String text, Color color, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        minimumSize: const Size(150, 50),
+      ),
+      child: Text(text, style: const TextStyle(fontSize: 18)),
     );
   }
 }

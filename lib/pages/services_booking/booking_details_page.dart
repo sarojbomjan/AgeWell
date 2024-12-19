@@ -201,6 +201,9 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
   }
 
   void _showRescheduleModal() {
+    DateTime? selectedDate;
+    TimeOfDay? selectedTime;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -210,7 +213,7 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
-            return Container(
+            return Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
@@ -231,32 +234,43 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                     ListTile(
                       leading: const Icon(Icons.calendar_today),
                       title: const Text('Date'),
-                      subtitle:
-                          Text(DateFormat('d MMM, y').format(DateTime.now())),
+                      subtitle: Text(
+                        selectedDate != null
+                            ? DateFormat('d MMM, yyyy').format(selectedDate!)
+                            : 'Pick a new date',
+                      ),
                       onTap: () async {
-                        final DateTime? picked = await showDatePicker(
+                        final DateTime? pickedDate = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime.now(),
                           lastDate:
                               DateTime.now().add(const Duration(days: 365)),
                         );
-                        if (picked != null) {
-                          setModalState(() {});
+                        if (pickedDate != null) {
+                          setModalState(() {
+                            selectedDate = pickedDate;
+                          });
                         }
                       },
                     ),
                     ListTile(
                       leading: const Icon(Icons.access_time),
                       title: const Text('Time'),
-                      subtitle: Text('Pick new time'),
+                      subtitle: Text(
+                        selectedTime != null
+                            ? selectedTime!.format(context)
+                            : 'Pick a new time',
+                      ),
                       onTap: () async {
-                        final TimeOfDay? picked = await showTimePicker(
+                        final TimeOfDay? pickedTime = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.now(),
                         );
-                        if (picked != null) {
-                          setModalState(() {});
+                        if (pickedTime != null) {
+                          setModalState(() {
+                            selectedTime = pickedTime;
+                          });
                         }
                       },
                     ),
@@ -265,14 +279,18 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Logic to save the new rescheduled time
+                          if (selectedDate == null || selectedTime == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text('Please select both date and time'),
+                              ),
+                            );
+                            return;
+                          }
+
+                          _rescheduleBooking(selectedDate!, selectedTime!);
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content:
-                                  Text('Appointment rescheduled successfully'),
-                            ),
-                          );
                         },
                         child: const Text('Confirm Reschedule'),
                         style: ElevatedButton.styleFrom(
@@ -289,6 +307,50 @@ class _BookingDetailsPageState extends State<BookingDetailsPage> {
         );
       },
     );
+  }
+
+  void _rescheduleBooking(DateTime date, TimeOfDay time) async {
+    try {
+      final newDateTime = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+
+      await FirebaseFirestore.instance
+          .collection(widget.bookingType == 'doctor'
+              ? 'DoctorBooking'
+              : 'CaregiverBooking')
+          .doc(widget.bookingID)
+          .update({
+        'appointmentDate': widget.bookingType == 'doctor'
+            ? DateFormat('yyyy-MM-dd').format(newDateTime)
+            : null, // For doctors
+        'appointmentTime': widget.bookingType == 'doctor'
+            ? DateFormat('HH:mm').format(newDateTime)
+            : null, // For doctors
+        'startDate': widget.bookingType == 'caregiver'
+            ? Timestamp.fromDate(newDateTime)
+            : null, // For caregivers
+        'startTime': widget.bookingType == 'caregiver'
+            ? DateFormat('HH:mm').format(newDateTime)
+            : null, // For caregivers
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Appointment rescheduled successfully'),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to reschedule: $error'),
+        ),
+      );
+    }
   }
 
   void _cancelAppointment() {

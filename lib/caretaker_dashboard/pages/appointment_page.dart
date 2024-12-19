@@ -87,12 +87,6 @@ class ScheduleContent extends StatelessWidget {
               color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              // TODO: Implement date picker
-            },
-            child: const Text('Change Date'),
-          ),
         ],
       ),
     );
